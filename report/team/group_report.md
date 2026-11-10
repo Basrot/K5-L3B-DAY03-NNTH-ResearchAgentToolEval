@@ -83,7 +83,7 @@ Lấy từ `results[*].result.failures` trong run JSON (`starter_v0/runs/v0_B_ba
 
 ### B3. Team Eval Cases
 
-Liệt kê đúng 10 case trong `starter_v0/data/eval_group.json` (5 single turn + 5 multi turn). Kết quả chạy thực tế trên `v3` (`starter_v0/runs/v3_B_group_openrouter_20261110T193715824551.json`, `artifact_version: v3+p9899d34c0a9d+tf4fef6d67931`) đạt **10/10 PASS (`case_accuracy: 1.0`, `tool_routing_accuracy: 1.0`, `argument_accuracy: 1.0`, `multiturn_accuracy: 1.0`, `provider_error_cases: 0`)**:
+`starter_v0/data/eval_group.json` hiện có 11 case (6 single-turn + 5 multi-turn). Run v3 dưới đây được tạo trước khi thêm G11 và chỉ đo G01–G10: **10/10 PASS** (`case_accuracy: 1.0`, `tool_routing_accuracy: 1.0`, `argument_accuracy: 1.0`, `multiturn_accuracy: 1.0`, `provider_error_cases: 0`). G11 chưa có kết quả chạy, không tính vào các metric này.
 
 | Case ID | What It Tests | Expected Tool/Behavior | Result |
 |---|---|---|---|
@@ -97,6 +97,7 @@ Liệt kê đúng 10 case trong `starter_v0/data/eval_group.json` (5 single turn
 | `G08_multiturn_timeline_correction` (Multi-turn) | Cập nhật tài khoản sang Yann LeCun (handle `"ylecun"`) và giảm giới hạn số lượng bài đăng từ 5 xuống 3. | `timeline(screenname="ylecun", limit=3)` | **PASS** |
 | `G09_multiturn_lookup_timeframe` (Multi-turn) | Chuyển `topic="general"` sang `topic="news"` và cập nhật `timeframe="month"` cho chủ đề `semiconductor` qua nhiều lượt. | `lookup(query="semiconductor", topic="news", timeframe="month")` | **PASS** |
 | `G10_multiturn_confirmed_send` (Multi-turn) | Sau khi bot đã hỏi xác nhận và user đã xác nhận rõ ràng ở lượt 3, agent gọi tool `send` với `confirmed=true`. | `send(text="Nghiên cứu mới về Agentic AI vừa được công bố.", confirmed=true)` | **PASS** |
+| `G11_deduplicate_sources_urls` (Single-turn) | Danh sách URL nguồn phải được chuyển nguyên dạng vào `deduplicate_sources`; tool sẽ xử lý URL trùng và URL không hợp lệ. | `deduplicate_sources(urls=[...])` | **Chưa chạy** |
 
 ### B4. Live Chat Evidence
 
@@ -110,11 +111,13 @@ Lấy từ `starter_v0/transcripts/*.transcript.json`.
 
 | Item | Evidence File | What Worked | Risk / Guardrail |
 |---|---|---|---|
-| Tool mới (`tools/<tên>/`) |  |  |  |
-| Unit test tool mới (≥ 3 test/tool) | `pytest` output (0 failed) |  |  |
-| UI (lệnh chạy + link dùng thử) |  |  |  |
+| Tool mới: `extract_keywords` | `starter_v0/tools/extract_keywords/tool.py`, `starter_v0/tools/extract_keywords/TOOL.md` | Trích các từ xuất hiện nhiều nhất sau khi lọc stop words, trả về từ khóa cùng số lần xuất hiện; không cần gọi API bên ngoài. | Kết quả dựa trên tần suất từ và danh sách stop words, không thay thế phân tích ngữ nghĩa. Kiểm tra kiểu `text` và `top_k`; trả lỗi khi input không hợp lệ. |
+| Tool mới: `deduplicate_sources` | `starter_v0/tools/deduplicate_sources/tool.py`, `starter_v0/tools/deduplicate_sources/TOOL.md` | Giữ URL hợp lệ đầu tiên theo thứ tự; bỏ trùng không phân biệt hoa thường ở scheme/host, bỏ fragment và trailing slash khi so trùng, giữ query string; đếm URL trùng và không hợp lệ. | Chỉ nhận URL HTTP(S); bỏ qua item/URL không hợp lệ và báo `invalid_count`. Không có side effect hay gửi dữ liệu ra ngoài. |
+| Unit test: `extract_keywords` (3 test cases) | `starter_v0/tests/test_tools_todo.py` — `test_extract_keywords_happy_path_returns_top_frequent_words`, `test_extract_keywords_bad_input_from_model_handles_gracefully`, `test_extract_keywords_failure_returns_error_dict` | Bao phủ kết quả thường, input rỗng/whitespace và xử lý input sai/top_k không hợp lệ. | Ví dụ lỗi được unit test bắt nhưng eval không kiểm tra: `text=None` phải trả `invalid_input`, hoặc `top_k=0` phải trả `invalid_top_k`. |
+| Unit test: `deduplicate_sources` (3 test cases) | `starter_v0/tests/test_deduplicate_sources.py` — `test_deduplicate_sources_removes_fragments_and_trailing_slashes`, `test_deduplicate_sources_rejects_non_list_input`, `test_deduplicate_sources_skips_invalid_urls_and_items` | Bao phủ chuẩn hóa URL và giữ query string, input không phải list, cùng URL/item không hợp lệ. | Ví dụ lỗi được unit test bắt nhưng eval G11 không kiểm tra: truyền `urls` không phải list phải trả `invalid_input`; G11 chỉ kiểm tra routing và truyền một list URL. |
+| UI | `starter_v0/app.py`, `starter_v0/requirements.txt` | Chạy local bằng `cd starter_v0` rồi `python -m streamlit run app.py`; UI mặc định mở tại `http://localhost:8501`. | Chưa có link deploy công khai được ghi nhận. Cần cấu hình API key cho provider đã chọn; không đưa key vào báo cáo hoặc transcript. |
 
-Tool unit tests: số test đã viết, và một ví dụ lỗi mà unit test bắt được nhưng eval không bắt được.
+**Trạng thái chạy unit test:** các test mới được liệt kê ở trên trong source; chưa ghi nhận output chạy pytest cho riêng các test này trong phần bằng chứng B5a.
 
 ### B5. Bonus Evidence
 
