@@ -5,6 +5,7 @@
 - Họ tên: Trần Trọng Đức Tài
 - MSSV: 2A202603732
 - Email: 26ai.taittd@vinuni.edu.vn
+- GitHub: DucTai2804
 
 ## 2. Phần việc phụ trách
 

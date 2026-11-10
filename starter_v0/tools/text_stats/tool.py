@@ -71,3 +71,4 @@ def calculate_text_stats(text: str = "", wpm: int = 200) -> dict[str, Any]:
         "paragraph_count": paragraph_count,
         "reading_time_minutes": reading_time,
     }
+

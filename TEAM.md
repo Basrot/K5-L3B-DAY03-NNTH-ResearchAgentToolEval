@@ -14,7 +14,7 @@
 |   1 | Nguyễn Gia Nam     | 2A202603761 | 26ai.namng@vinuni.edu.vn  | Basrot     | Trưởng nhóm / Phát triển Streamlit UI, tích hợp Agent, Live Chat, Deploy và báo cáo |
 |   2 | Thiều Thế Ngọc     | 2A202603788 | 26ai.ngoctt@vinuni.edu.vn | BFNGOC     | CP2: phân tích lỗi v1, tối ưu tool declaration cho R12                       |
 |   3 | Đào Ngọc Hân       | 2A202603779 | daongochan1505@gmail.com  | daongochan | Phụ trách Baseline v0, Failure Analysis (CP1), Tối ưu Prompt/Tools & Báo cáo |
-|   4 | Trần Trọng Đức Tài | 2A202603732 | 26ai.taittd@vinuni.edu.vn |            | Phụ trách Tool Developer & Testing (CP3), tối ưu v3                          |
+|   4 | Trần Trọng Đức Tài | 2A202603732 | 26ai.taittd@vinuni.edu.vn | DucTai2804 | Phụ trách Tool Developer & Testing (CP3), thiết kế Multi-turn Eval Cases (CP4) |
 
 ## Cá nhân
 

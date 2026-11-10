@@ -74,7 +74,24 @@ python -m streamlit run app.py
 
 > Tóm tắt các thay đổi chính trong `starter_v0/artifacts/system_prompt.md` và `starter_v0/artifacts/tools.yaml`, và tool mới nhóm viết (tên, làm gì, khi nào agent nên gọi).
 
--
+### 3.1. Tối ưu System Prompt (`system_prompt.md`)
+- **Loại bỏ các chỉ dẫn sai cố ý:** Xóa bỏ hoàn toàn thói quen tự suy đoán tài khoản (`sama`) hay tự bịa URL khi người dùng chưa cung cấp đầy đủ thông tin; xóa bỏ chỉ dẫn tự ý gửi bài khi chưa có xác nhận rõ ràng.
+- **Thiết lập ranh giới hoạt động (Out of Scope):** Quy định rõ ràng phạm vi của Research Agent; khi gặp các yêu cầu nằm ngoài phạm vi nghiên cứu (như giải toán tích phân, viết code thuật toán Fibonacci), agent lịch sự từ chối hoặc trả lời trực tiếp mà tuyệt đối không gọi tool (`no_tool`).
+- **Ép buộc hỏi lại (`clarify`):** Yêu cầu agent phải chủ động hỏi lại người dùng để bổ sung thông tin bắt buộc thay vì tự giả định.
+
+### 3.2. Chuẩn hóa Khai báo Tool (`tools.yaml`)
+- **Viết lại mô tả chi tiết:** Xác định rõ ràng chức năng, **khi nào nên dùng** và **khi nào KHÔNG nên dùng** cho từng công cụ để tránh tình trạng model chọn nhầm tool.
+- **Quy chuẩn hóa Arguments:**
+  - `lookup`: Quy định khi tìm tin tức (`topic="news"`), trường `query` chỉ chứa từ khóa chủ đề cốt lõi (ví dụ `"AI"`), không lặp lại từ `"news"` hay `"tin tức"`.
+  - `timeline`: Quy định tên tài khoản (`screenname`) không được chứa ký tự `@`.
+  - `clarify` & `send`: Thiết lập quy trình 2 bước nghiêm ngặt đối với tác vụ gửi tin Telegram — bước đầu tiên bắt buộc gọi `clarify` với `response_type="yes_no"` để xin xác nhận; chỉ khi người dùng xác nhận ở lượt sau với `confirmed=true` thì mới được phép thực thi tool `send`.
+
+### 3.3. Các Tool mới do nhóm tự phát triển
+Nhóm đã mở rộng năng lực của hệ thống bằng 3 công cụ tự phát triển độc lập (100% Python offline, không tốn credit API):
+1. **`extract_keywords`:** Trích xuất từ khóa quan trọng và tần suất xuất hiện từ văn bản dài, tự động lọc bỏ stop-words đa ngữ (Anh - Việt), hỗ trợ ký tự Unicode có dấu. Agent gọi khi người dùng muốn phân tích bài báo, trích xuất từ khóa hoặc gắn tag chủ đề.
+2. **`deduplicate_sources`:** Chuẩn hóa và loại bỏ các link URL nguồn bị trùng lặp (bỏ thẻ neo `#fragment`, bỏ dấu gạch chéo cuối `/`, giữ nguyên query string) và phát hiện URL không hợp lệ. Agent gọi để làm sạch danh sách nguồn trước khi tổng hợp bản tin.
+3. **`text_stats`:** Tính toán các chỉ số định lượng của văn bản (số từ, số ký tự, số câu, số đoạn) và ước tính thời gian đọc dựa trên tốc độ đọc WPM. Agent gọi khi người dùng muốn đo lường dung lượng tài liệu hoặc ước tính thời gian đọc bài viết.
+
 
 ## 4. Kết quả — PHẦN B: Chi tiết và bằng chứng
 
@@ -224,7 +241,6 @@ Lỗi đặc thù của model nhỏ (đếm từ run JSON):
 **Khó khăn:** Các thành viên làm việc song song trên GitHub nên có thể phát sinh thay đổi mới trên nhánh `main` trong quá trình tích hợp.
 
 **Cách xử lý:** Sử dụng Git branch để phát triển từng phần, đồng bộ các commit của nhóm trước khi merge và push lên `main`, hạn chế ghi đè mã nguồn của thành viên khác.
--
 
 ## 6. Tổng hợp đóng góp
 
@@ -232,11 +248,20 @@ Chi tiết đóng góp của từng thành viên nằm trong [TEAM.md](../../TEA
 
 ## 7. Hạn chế và hướng cải thiện — B6. Reflection
 
-- Fix nào thuộc `system_prompt.md`?
-- Fix nào thuộc `tools.yaml`?
-- Failure nào cần review thủ công thay vì chấm tự động?
-- Nếu có thêm một vòng, nhóm sẽ thử giả thuyết nào?
+- **Fix nào thuộc `system_prompt.md`?**
+  - Các sửa đổi mang tính định hướng hành vi tổng thể và ranh giới đạo đức/phạm vi hoạt động của Agent: loại bỏ thói quen đoán mò thông tin người dùng, từ chối các câu hỏi lập trình/giải toán nằm ngoài phạm vi research, và không tự tiện gọi tool khi người dùng chỉ hỏi chào hỏi thông thường.
+- **Fix nào thuộc `tools.yaml`?**
+  - Các quy chuẩn cụ thể về từng công cụ kỹ thuật: định dạng và quy ước tham số (`topic="news"` thì không lặp từ `"news"` trong `query`, `screenname` không chứa `@`), mô tả điều kiện khi nào dùng/không dùng, và quy định kiểu câu hỏi xác nhận `response_type="yes_no"` cho hành động nhạy cảm của `clarify` và `send`.
+- **Failure nào cần review thủ công thay vì chấm tự động?**
+  - Đánh giá chất lượng ngôn ngữ của câu hỏi làm rõ (`clarify`): Câu hỏi có tự nhiên, thân thiện và đi đúng trọng tâm thông tin còn thiếu hay không.
+  - Đánh giá độ trung thực (faithfulness), tính đầy đủ và khả năng tránh ảo giác trong câu trả lời tổng hợp cuối cùng cho người dùng: Hệ thống chấm tự động chỉ so khớp tên tool và tham số (`routing_correct` & `args_correct`), nhưng chưa thể đánh giá văn phong và độ chính xác của nội dung tổng hợp.
+- **Nếu có thêm một vòng, nhóm sẽ thử giả thuyết nào?**
+  - *Giả thuyết:* "Nếu bổ sung cơ chế Tự sửa sai (Self-Correction Loop: khi một tool bên thứ 3 trả về lỗi HTTP 429/503 hoặc không có dữ liệu, agent tự động chuyển sang công cụ tìm kiếm dự phòng hoặc thông báo rõ ràng cho người dùng thay vì dừng lại), thì tỷ lệ hoàn thành tác vụ nghiên cứu trong điều kiện mạng thực tế sẽ nâng cao rõ rệt."
 
 ## 8. Tài liệu tham khảo
 
--
+1. OpenAI Function Calling & Structured Outputs Documentation.
+2. Anthropic Tool Use Reference Guide.
+3. ArXiv API & Tavily Search API Documentation.
+4. Streamlit Community Cloud Documentation.
+
