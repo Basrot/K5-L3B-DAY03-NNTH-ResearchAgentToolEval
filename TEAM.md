@@ -9,12 +9,12 @@
 
 ## Thành viên
 
-| STT | Họ tên | MSSV | Email | GitHub | Vai trò |
-| --: | ------ | ---- | ----- | ------ | ------- |
-|   1 | Nguyễn Gia Nam | 2A202603761 | | Basrot | Trưởng nhóm / Kỹ thuật |
-|   2 | Thiều Thế Ngọc | 2A202603788 | 26ai.ngoctt@vinuni.edu.vn | BFNGOC | CP2: phân tích lỗi v1, tối ưu tool declaration cho R12 |
-|   3 | Đào Ngọc Hân | 2A202603779 | daongochan1505@gmail.com | daongochan | Phụ trách Baseline v0, Failure Analysis (CP1), Tối ưu Prompt/Tools & Báo cáo |
-|   4 | | | | | |
+| STT | Họ tên             | MSSV        | Email                     | GitHub     | Vai trò                                                                      |
+| --: | ------------------ | ----------- | ------------------------- | ---------- | ---------------------------------------------------------------------------- |
+|   1 | Nguyễn Gia Nam     | 2A202603761 |                           | Basrot     | Trưởng nhóm / Kỹ thuật                                                       |
+|   2 | Thiều Thế Ngọc     | 2A202603788 | 26ai.ngoctt@vinuni.edu.vn | BFNGOC     | CP2: phân tích lỗi v1, tối ưu tool declaration cho R12                       |
+|   3 | Đào Ngọc Hân       | 2A202603779 | daongochan1505@gmail.com  | daongochan | Phụ trách Baseline v0, Failure Analysis (CP1), Tối ưu Prompt/Tools & Báo cáo |
+|   4 | Trần Trọng Đức Tài | 2A202603732 | 26ai.taittd@vinuni.edu.vn |            | Phụ trách Tool Developer & Testing (CP3), tối ưu v3                          |
 
 ## Cá nhân
 
@@ -69,3 +69,23 @@ Sao chép mục dưới đây cho từng thành viên.
 - Khai báo tool: `starter_v0/artifacts/tools.yaml`.
 - Commit thay đổi R12: `55fb0c7` (`fix: update R12 tool.yaml`).
 - Báo cáo cá nhân: `report/team/2A202603788_ThieuTheNgoc.md`.
+
+## TranTrongDucTai-2A202603732
+
+### Phần việc phụ trách
+
+- Phát triển Tool mới `extract_keywords` và viết Unit Tests (CP3).
+- Phối hợp đăng ký tool trong registry và schema tools.yaml.
+- Phụ trách tối ưu giả thuyết cho phiên bản `v3`.
+
+### Đóng góp cụ thể
+
+- Tạo tool `starter_v0/tools/extract_keywords/` gồm `tool.py` và `TOOL.md` chuẩn contract.
+- Đăng ký tool trong `starter_v0/tools/__init__.py` và `starter_v0/artifacts/tools.yaml`.
+- Viết 3 unit tests hoàn chỉnh trong `starter_v0/tests/test_tools_todo.py` bao phủ happy path, bad input và error branch; giữ test suite 70 test passed, 0 failed.
+
+### Bằng chứng
+
+- Tool: `starter_v0/tools/extract_keywords/tool.py`, `TOOL.md`
+- Tests: `starter_v0/tests/test_tools_todo.py`
+- Commit: `1f527c4` trên branch `2A202603732_TranTrongDucTai`
