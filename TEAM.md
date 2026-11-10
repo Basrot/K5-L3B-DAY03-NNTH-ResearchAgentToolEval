@@ -27,6 +27,42 @@ report/team/MSSV_HoTen.md
 Ví dụ: `report/team/20241234_NguyenVanAn.md`.
 
 Sao chép mục dưới đây cho từng thành viên.
+## NguyenGiaNam-2A202603761
+
+### Phần việc phụ trách
+
+- Trưởng nhóm, hỗ trợ quản lý repository GitHub và tích hợp sản phẩm chung.
+- Phát triển giao diện Research Agent bằng Streamlit (CP4 — UI và Live Chat).
+- Tích hợp giao diện với backend Tool Calling của nhóm thông qua `chat.py`.
+- Kiểm thử hội thoại nhiều lượt, lưu transcript JSON làm bằng chứng.
+- Triển khai website trên Streamlit Community Cloud để phục vụ demo công khai.
+- Phối hợp hoàn thiện `TEAM.md`, `group_report.md` và báo cáo cá nhân.
+
+### Đóng góp cụ thể
+
+- Xây dựng giao diện `starter_v0/app.py` bằng Streamlit, hỗ trợ người dùng gửi câu hỏi và nhận phản hồi trực tiếp từ AI Research Agent.
+- Tích hợp hàm `run_model_tool_loop()` để Agent có thể thực hiện Tool Calling nhiều vòng, nhận kết quả công cụ và tạo câu trả lời cuối cùng.
+- Xây dựng chức năng hiển thị lịch sử hội thoại, tên công cụ được gọi, arguments và kết quả thực thi công cụ.
+- Bổ sung cấu hình Provider, Model, số lượt hội thoại giữ ngữ cảnh và số vòng gọi công cụ tối đa.
+- Triển khai chức năng lưu và tải transcript JSON, phục vụ kiểm tra các lượt chat và đánh giá hành vi Agent.
+- Kiểm thử kết nối với OpenRouter và Gemini; sử dụng `gemini-3.5-flash-lite` trong các phiên kiểm thử giao diện.
+- Thực hiện kiểm thử các tình huống cơ bản, yêu cầu thiếu thông tin và hội thoại nhiều lượt. Ghi nhận các lỗi như HTTP 402, HTTP 503 và thiếu API key.
+- Triển khai ứng dụng trên Streamlit Community Cloud, cấu hình API key thông qua Secrets và kiểm thử hội thoại trên website công khai.
+- Không cung cấp tool `send` trong giao diện web nhằm tránh gửi Telegram ngoài ý muốn.
+- Phối hợp cập nhật tài liệu nhóm và tích hợp mã nguồn UI vào nhánh `main`.
+
+### Bằng chứng
+
+- Source code UI: `starter_v0/app.py`.
+- Dependencies: `starter_v0/requirements.txt`.
+- Backend tích hợp: `starter_v0/chat.py`.
+- Transcript kiểm thử: `starter_v0/transcripts/v0_gemini_20261110T181508022586.transcript.json`.
+- Live Chat trên Streamlit Cloud: [BỔ SUNG ĐƯỜNG DẪN FILE TRANSCRIPT ĐÃ TẢI VÀ COMMIT].
+- Website demo công khai: [BỔ SUNG URL `.streamlit.app`].
+- Merge commit tích hợp UI: `1566ce9`.
+- Báo cáo cá nhân: `report/team/2A202603761_NguyenGiaNam.md`.
+- Báo cáo nhóm: `report/team/group_report.md` (các mục A1, A3, B4, B5a và khó khăn triển khai).
+- Công cụ hỗ trợ: ChatGPT, Python 3.11, Streamlit, Gemini API, Git, GitHub và Visual Studio Code.
 
 ## DaoNgocHan-2A202603779
 
