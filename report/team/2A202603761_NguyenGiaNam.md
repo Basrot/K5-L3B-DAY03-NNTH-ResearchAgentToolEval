@@ -10,7 +10,7 @@
 
 Trong Lab 03 — Research Agent Tool Eval, em đảm nhiệm vai trò trưởng nhóm, đồng thời phụ trách phát triển giao diện người dùng (Frontend), tích hợp AI Research Agent với Streamlit, kiểm thử tương tác thực tế và phối hợp tổng hợp bằng chứng nộp bài.
 
-Các nhiệm vụ chính của em bao gồm:
+Các nhiệm vụ chính của em bao gồm: 
 
 - Xây dựng giao diện web bằng Streamlit cho phép người dùng trò chuyện trực tiếp với Research Agent.
 - Tích hợp giao diện với backend có sẵn, đặc biệt là luồng Tool Calling trong `chat.py`.
