@@ -1,0 +1,28 @@
+{
+  "transcript_id": "v0_openrouter_20261110T181252909325",
+  "version": "v0",
+  "artifact_version": "v0+peb1c8179815b+te69bc53ed884",
+  "prompt_hash": "eb1c8179815bd79d34de7d326420bb99b3072e6e8ae96464c02d4411f905fc68",
+  "tools_hash": "e69bc53ed8846a5c2192e950c539806a61a6902b718f06d6773db6a42e9b996c",
+  "provider": "openrouter",
+  "model": null,
+  "system_prompt": "C:\\Users\\Admin\\Desktop\\Vinuni_AI\\K5-L3-DAY03-NNHH-ResearchAgentToolEval\\starter_v0\\artifacts\\system_prompt.md",
+  "tools": "C:\\Users\\Admin\\Desktop\\Vinuni_AI\\K5-L3-DAY03-NNHH-ResearchAgentToolEval\\starter_v0\\artifacts\\tools.yaml",
+  "history_window": 5,
+  "max_tool_rounds": 4,
+  "created_at": "2026-11-10T18:12:52",
+  "updated_at": "2026-11-10T18:13:17",
+  "turns": [
+    {
+      "turn_index": 1,
+      "started_at": "2026-11-10T18:13:15",
+      "user": "Xin chào bạn có thể làm được mẹ gì cho tôi ?",
+      "status": "provider_error",
+      "assistant_text": null,
+      "rounds": [],
+      "tool_events": [],
+      "error": "APIStatusError: Error code: 402 - Insufficient credits. This account never purchased credits. Make sure your key is on the correct account or org, and if so, purchase more at https://openrouter.ai/settings/credits",
+      "ended_at": "2026-11-10T18:13:17"
+    }
+  ]
+}
