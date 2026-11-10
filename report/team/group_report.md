@@ -63,9 +63,9 @@ Lấy từ `starter_v0/artifacts/version_log.csv` và `starter_v0/runs/*.json`. 
 | Version | Changed Artifact | Hypothesis | Metric Before | Metric After | Run File |
 |---|---|---|---:|---:|---|
 | v0 | baseline | Đo hành vi chưa tối ưu trước khi sửa (`system_prompt.md` + `tools.yaml` gốc) | — | 0.65 (routing: 0.75, args: 0.65, multiturn: 1.00) | `starter_v0/runs/v0_B_base_openrouter_20261110T173950199134.json` |
-| v1 |  |  | 0.65 |  |  |
-| v2 |  |  |  |  |  |
-| v3 |  |  |  |  |  |
+| v1 | `system_prompt.md`, `tools.yaml` | Bỏ chỉ dẫn xấu trong `system_prompt.md` (ép đoán mò, ép gọi tool) và làm rõ phạm vi tool trong `tools.yaml` sẽ giúp agent gọi `clarify` khi thiếu handle/URL (`R10`, `R11`) và không gọi tool khi ngoài phạm vi (`R08`, `R14`) | 0.65 | 0.90 (routing: 0.90, args: 0.90, multiturn: 0.8333) | `starter_v0/runs/v1_B_base_openrouter_20261110T180455272193.json` |
+| v2 | `tools.yaml` | Thêm boundary xác nhận vào mô tả của `send` và `clarify` trong `tools.yaml` sẽ giúp agent route sang `clarify` thay vì gọi `send` ngay khi chưa có xác nhận (`R12`) | 0.90 | 0.95 (routing: 1.00, args: 0.95, multiturn: 1.00) | `starter_v0/runs/v2_B_base_openrouter_20261110T185059346257.json` |
+| v3 | `tools.yaml` | Quy định rõ trong `clarify` và `send` rằng bước đầu của mọi yêu cầu gửi/đăng Telegram bắt buộc dùng `response_type="yes_no"` (không dùng `"text"` trước bước xác nhận kể cả khi nội dung chưa nêu rõ) sẽ nâng `argument_accuracy` và `case_accuracy` lên 1.00 | 0.95 | 1.00 (routing: 1.00, args: 1.00, multiturn: 1.00) | `starter_v0/runs/v3_B_base_openrouter_20261110T191036287347.json` |
 
 ### B2. Failure Analysis
 
