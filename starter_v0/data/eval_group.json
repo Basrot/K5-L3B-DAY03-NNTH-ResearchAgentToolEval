@@ -320,6 +320,28 @@
         "difficulty": "medium",
         "what_it_tests": "Yêu cầu bỏ trùng URL nguồn phải gọi tool deduplicate_sources với list urls, không dùng tìm kiếm web hoặc xử lý thủ công."
       }
+    },
+    {
+      "id": "G12_text_stats_estimate",
+      "phase": "B",
+      "query": "Đếm số từ và ước tính thời gian đọc (theo tốc độ đọc 250 từ/phút) cho đoạn văn sau: 'Large language models are capable of complex reasoning and tool calling across various domains.'",
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "text_stats",
+            "args": {
+              "text": "Large language models are capable of complex reasoning and tool calling across various domains.",
+              "wpm": 250
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "route_text_stats_tool",
+        "difficulty": "medium",
+        "what_it_tests": "Yêu cầu đếm số từ và ước tính thời gian đọc văn bản phải gọi tool text_stats với đúng text và wpm=250."
+      }
     }
   ]
 }

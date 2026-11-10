@@ -143,3 +143,13 @@ tools:
           description: "Danh sách URL HTTP(S) cần loại trùng."
           items: {type: string}
       required: [urls]
+
+  - name: text_stats
+    description: "Tính toán các số liệu thống kê văn bản (số từ, số ký tự, số câu, số đoạn) và ước tính thời gian đọc (phút) dựa trên tốc độ đọc WPM. Dùng khi người dùng yêu cầu đo độ dài, đếm số từ, số ký tự hoặc ước tính thời gian đọc một đoạn văn bản hay bài viết."
+    parameters:
+      type: object
+      properties:
+        text: {type: string, default: "", description: "Đoạn văn bản cần phân tích và tính toán thống kê"}
+        wpm: {type: integer, default: 200, description: "Tốc độ đọc trung bình tính theo từ trên phút (Words Per Minute), mặc định 200"}
+      required: [text]
+

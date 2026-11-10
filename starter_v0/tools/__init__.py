@@ -19,6 +19,7 @@ from .send.tool import send_telegram
 from .lookup.tool import web_search
 from .extract_keywords.tool import extract_keywords
 from .deduplicate_sources.tool import deduplicate_sources
+from .text_stats.tool import calculate_text_stats
 
 
 # NOTE (starter_v0): tool names here are intentionally vague. These keys are the
@@ -39,6 +40,7 @@ TOOL_FUNCTIONS = {
     "paper_text": get_arxiv_paper_text,
     "extract_keywords": extract_keywords,
     "deduplicate_sources": deduplicate_sources,
+    "text_stats": calculate_text_stats,
     # TODO CP3 (student): register your new tool here, e.g. "my_tool": my_tool_function,
     # then declare it in artifacts/tools.yaml and run `pytest tests/test_tool_contract.py`.
 }

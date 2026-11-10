@@ -8,22 +8,20 @@
 
 ## 2. Phần việc phụ trách
 
-- **CP3 (Tool mới & Unit Test):** Nghiên cứu hợp đồng tool (`tools/README.md`), thiết kế và cài đặt tool mới `extract_keywords` phục vụ bài toán tóm lược/trích xuất từ khóa cho Research Agent; đăng ký tool trong registry và schema hệ thống; viết bộ unit tests bao phủ các nhánh.
-- **CP4 (Bộ Eval của nhóm — 5 Multi-turn cases):** Thiết kế và cài đặt 5 test cases dạng multi-turn (`turns`) trong `starter_v0/data/eval_group.json` (từ `G06` đến `G10`), bao gồm kiểm tra tool mới `extract_keywords`, switch tool, chuyển đổi ngữ cảnh, và xác nhận Telegram boundary qua nhiều lượt.
+- **CP3 (Tool mới & Unit Test):** Nghiên cứu hợp đồng tool (`tools/README.md`), thiết kế và cài đặt 2 tool mới cho Research Agent gồm `extract_keywords` (trích xuất từ khóa/tần suất) và `text_stats` (thống kê số từ/số câu/đoạn và ước tính thời gian đọc WPM); đăng ký tool trong registry và schema hệ thống; viết bộ unit tests hoàn chỉnh cho từng tool bao phủ các nhánh.
+- **CP4 (Bộ Eval của nhóm — 5 Multi-turn cases & eval case cho tool mới):** Thiết kế và cài đặt 5 test cases dạng multi-turn (`turns`) trong `starter_v0/data/eval_group.json` (từ `G06` đến `G10`), cùng test case `G12_text_stats_estimate` kiểm tra định tuyến đến tool `text_stats`.
 - **CP2 (Tối ưu prompt/tools & phối hợp):** Phối hợp cùng nhóm kiểm thử và đồng bộ các phiên bản v1, v2, v3.
 
 ## 3. Đóng góp cụ thể
 
-- **Phát triển tool mới (`extract_keywords`):**
-  - Cài đặt hàm `extract_keywords(text, top_k)` trong `starter_v0/tools/extract_keywords/tool.py` hỗ trợ trích xuất từ khóa tần suất cao, lọc bỏ stop words (tiếng Anh và tiếng Việt), xử lý Unicode ký tự có dấu, và trả về dict an toàn `{ "error": ... }` khi gặp dữ liệu không hợp lệ mà không làm crash agent (`raise Exception`).
-  - Viết tài liệu đặc tả `starter_v0/tools/extract_keywords/TOOL.md` đầy đủ YAML frontmatter theo đúng chuẩn của đề bài.
-  - Đăng ký hàm vào `TOOL_FUNCTIONS` trong `starter_v0/tools/__init__.py` và khai báo schema tham số đầy đủ trong `starter_v0/artifacts/tools.yaml`.
-- **Viết Unit Tests cho Tool:**
-  - Viết 3 unit tests hoàn chỉnh trong `starter_v0/tests/test_tools_todo.py`:
-    1. Happy path: kiểm tra trích xuất đúng top keyword ("agent" xuất hiện 3 lần).
-    2. Bad input: kiểm tra chuỗi rỗng, khoảng trắng, và trường hợp model gửi số dạng chuỗi (`top_k="2"`).
-    3. Failure branch: kiểm tra bắt lỗi an toàn khi truyền sai kiểu dữ liệu (`text=None`) hoặc `top_k <= 0`.
-  - Chạy `pytest` xác nhận: `tests/test_tool_contract.py` pass 60/60 checks, toàn suite pass 70/70 tests, 0 failed.
+- **Phát triển 2 tool mới (`extract_keywords` & `text_stats`):**
+  - **Tool `extract_keywords`:** Cài đặt hàm trong `starter_v0/tools/extract_keywords/tool.py` hỗ trợ trích xuất từ khóa tần suất cao, lọc bỏ stop words (Anh - Việt), xử lý Unicode ký tự có dấu, và trả về dict an toàn `{ "error": ... }` khi gặp dữ liệu không hợp lệ. Viết tài liệu đặc tả `TOOL.md`.
+  - **Tool `text_stats`:** Cài đặt hàm trong `starter_v0/tools/text_stats/tool.py` tính toán số từ, số ký tự, số câu, số đoạn văn và ước tính thời gian đọc dựa trên tốc độ WPM. Viết tài liệu đặc tả `TOOL.md`.
+  - Đăng ký cả 2 hàm vào `TOOL_FUNCTIONS` trong `starter_v0/tools/__init__.py` và khai báo schema tham số đầy đủ trong `starter_v0/artifacts/tools.yaml`.
+- **Viết Unit Tests cho các Tool mới:**
+  - Viết 3 unit tests cho `extract_keywords` trong `starter_v0/tests/test_tools_todo.py`.
+  - Viết 3 unit tests cho `text_stats` trong `starter_v0/tests/test_text_stats.py` bao phủ happy path, bad input (chuỗi rỗng, wpm ép kiểu từ chuỗi) và failure branch (`text=None`, `wpm <= 0`).
+  - Chạy `pytest` xác nhận: `tests/test_tool_contract.py` pass toàn bộ hợp đồng, toàn suite pass 86/86 tests, 0 failed.
 
 - **Viết 5 Multi-turn Eval Cases cho nhóm (CP4):**
   - Viết 5 case multi-turn hoàn chỉnh trong `starter_v0/data/eval_group.json` (`G06` đến `G10`), kết hợp cùng 5 case single-turn của bạn Ngọc để hoàn thành đủ 10 case:
@@ -37,11 +35,15 @@
 ## 4. Bằng chứng
 
 - File/commit/PR:
-  - Tool source & docs: `starter_v0/tools/extract_keywords/tool.py`, `TOOL.md`
+  - Tool source & docs:
+    - `starter_v0/tools/extract_keywords/tool.py`, `TOOL.md`
+    - `starter_v0/tools/text_stats/tool.py`, `TOOL.md`
   - Registry & schema: `starter_v0/tools/__init__.py`, `starter_v0/artifacts/tools.yaml`
-  - Unit tests: `starter_v0/tests/test_tools_todo.py`
-  - Eval group cases (G06-G10): `starter_v0/data/eval_group.json`
-  - Báo cáo nhóm: Mục CP3, CP4 trong `report/team/group_report.md`
+  - Unit tests:
+    - `starter_v0/tests/test_tools_todo.py` (cho `extract_keywords`)
+    - `starter_v0/tests/test_text_stats.py` (cho `text_stats`)
+  - Eval group cases: `starter_v0/data/eval_group.json` (G06 - G10 multi-turn và G12 cho `text_stats`)
+  - Báo cáo nhóm: Mục A2, B5a trong `report/team/group_report.md`
 - AI/công cụ đã dùng và cách tự kiểm tra kết quả:
   - Dùng `pytest` offline để kiểm tra hợp đồng schema và unit tests, đảm bảo 0 failed.
 

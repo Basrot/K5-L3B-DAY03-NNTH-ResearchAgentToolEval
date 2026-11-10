@@ -120,18 +120,20 @@ Sao chép mục dưới đây cho từng thành viên.
 
 ### Phần việc phụ trách
 
-- Phát triển Tool mới `extract_keywords` và viết Unit Tests (CP3).
+- Phát triển 2 Tool mới (`extract_keywords`, `text_stats`) và viết Unit Tests (CP3).
 - Phối hợp đăng ký tool trong registry và schema tools.yaml.
-- Phụ trách tối ưu giả thuyết cho phiên bản `v3`.
+- Thiết kế 5 case kiểm thử multi-turn trong bộ `data/eval_group.json` (CP4) và case cho tool mới.
 
 ### Đóng góp cụ thể
 
-- Tạo tool `starter_v0/tools/extract_keywords/` gồm `tool.py` và `TOOL.md` chuẩn contract.
-- Đăng ký tool trong `starter_v0/tools/__init__.py` và `starter_v0/artifacts/tools.yaml`.
-- Viết 3 unit tests hoàn chỉnh trong `starter_v0/tests/test_tools_todo.py` bao phủ happy path, bad input và error branch; giữ test suite 70 test passed, 0 failed.
+- Tạo tool `starter_v0/tools/extract_keywords/` và `starter_v0/tools/text_stats/` gồm `tool.py` và `TOOL.md` chuẩn contract.
+- Đăng ký các tool trong `starter_v0/tools/__init__.py` và `starter_v0/artifacts/tools.yaml`.
+- Viết các bộ unit tests hoàn chỉnh trong `starter_v0/tests/test_tools_todo.py` và `starter_v0/tests/test_text_stats.py` bao phủ happy path, bad input và error branch; giữ test suite 86 test passed, 0 failed.
+- Xây dựng 5 case multi-turn (`G06` đến `G10`) cùng case `G12` trong `starter_v0/data/eval_group.json`.
 
 ### Bằng chứng
 
-- Tool: `starter_v0/tools/extract_keywords/tool.py`, `TOOL.md`
-- Tests: `starter_v0/tests/test_tools_todo.py`
-- Commit: `1f527c4` trên branch `2A202603732_TranTrongDucTai`
+- Tool: `starter_v0/tools/extract_keywords/`, `starter_v0/tools/text_stats/`
+- Tests: `starter_v0/tests/test_tools_todo.py`, `starter_v0/tests/test_text_stats.py`
+- Eval group cases: `starter_v0/data/eval_group.json` (G06 - G10, G12)
+- Báo cáo cá nhân: `report/team/2A202603732_TranTrongDucTai.md`

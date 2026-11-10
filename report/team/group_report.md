@@ -48,9 +48,19 @@ python -m streamlit run app.py
 
 | Tên tool | Làm được gì | Tool mới nhóm thêm? |
 |---|---|---|
-| clarify | hỏi lại người dùng khi thiếu thông tin | không |
-|  |  |  |
-|  |  |  |
+| `clarify` | Hỏi lại người dùng khi thiếu thông tin hoặc xin xác nhận trước hành động gửi | không |
+| `timeline` | Lấy các bài đăng gần đây của một tài khoản Twitter/X | không |
+| `social_search` | Tìm kiếm bài đăng trên mạng xã hội Twitter/X theo từ khóa | không |
+| `lookup` | Tra cứu thông tin và tin tức trên Internet (web search) | không |
+| `fetch` | Đọc và trích xuất nội dung từ một địa chỉ URL | không |
+| `format` | Định dạng các thông tin đã thu thập thành markdown digest | không |
+| `send` | Gửi bản tin văn bản lên kênh Telegram sau khi có xác nhận | không |
+| `policy` | Tra cứu tài liệu chính sách và quy định nội bộ của tổ chức | không |
+| `papers` | Tìm kiếm bài báo khoa học học thuật trên arXiv | không |
+| `paper_text` | Tải và đọc nội dung văn bản PDF của bài báo arXiv | không |
+| `extract_keywords` | Trích xuất các từ khóa quan trọng và tần suất xuất hiện từ văn bản | **có (nhóm thêm)** |
+| `deduplicate_sources` | Loại bỏ các URL nguồn bị trùng lặp, chuẩn hóa danh sách link | **có (nhóm thêm)** |
+| `text_stats` | Tính toán số từ, số ký tự, số câu, số đoạn và ước tính thời gian đọc văn bản | **có (nhóm thêm)** |
 
 ### A3. Câu hỏi mẫu để thử
 
@@ -134,8 +144,10 @@ Các tình huống kiểm thử gồm: yêu cầu cơ bản, duy trì ngữ cả
 |---|---|---|---|
 | Tool mới: `extract_keywords` | `starter_v0/tools/extract_keywords/tool.py`, `starter_v0/tools/extract_keywords/TOOL.md` | Trích các từ xuất hiện nhiều nhất sau khi lọc stop words, trả về từ khóa cùng số lần xuất hiện; không cần gọi API bên ngoài. | Kết quả dựa trên tần suất từ và danh sách stop words, không thay thế phân tích ngữ nghĩa. Kiểm tra kiểu `text` và `top_k`; trả lỗi khi input không hợp lệ. |
 | Tool mới: `deduplicate_sources` | `starter_v0/tools/deduplicate_sources/tool.py`, `starter_v0/tools/deduplicate_sources/TOOL.md` | Giữ URL hợp lệ đầu tiên theo thứ tự; bỏ trùng không phân biệt hoa thường ở scheme/host, bỏ fragment và trailing slash khi so trùng, giữ query string; đếm URL trùng và không hợp lệ. | Chỉ nhận URL HTTP(S); bỏ qua item/URL không hợp lệ và báo `invalid_count`. Không có side effect hay gửi dữ liệu ra ngoài. |
+| Tool mới: `text_stats` | `starter_v0/tools/text_stats/tool.py`, `starter_v0/tools/text_stats/TOOL.md` | Tính toán số từ, số ký tự, số câu, số đoạn văn và ước tính thời gian đọc (phút) dựa trên tốc độ WPM; không cần mạng bên ngoài. | Kiểm tra kiểu dữ liệu `text` và `wpm > 0`; trả về dict báo lỗi `{error: ...}` an toàn mà không làm crash chương trình. |
 | Unit test: `extract_keywords` (3 test cases) | `starter_v0/tests/test_tools_todo.py` — `test_extract_keywords_happy_path_returns_top_frequent_words`, `test_extract_keywords_bad_input_from_model_handles_gracefully`, `test_extract_keywords_failure_returns_error_dict` | Bao phủ kết quả thường, input rỗng/whitespace và xử lý input sai/top_k không hợp lệ. | Ví dụ lỗi được unit test bắt nhưng eval không kiểm tra: `text=None` phải trả `invalid_input`, hoặc `top_k=0` phải trả `invalid_top_k`. |
 | Unit test: `deduplicate_sources` (3 test cases) | `starter_v0/tests/test_deduplicate_sources.py` — `test_deduplicate_sources_removes_fragments_and_trailing_slashes`, `test_deduplicate_sources_rejects_non_list_input`, `test_deduplicate_sources_skips_invalid_urls_and_items` | Bao phủ chuẩn hóa URL và giữ query string, input không phải list, cùng URL/item không hợp lệ. | Ví dụ lỗi được unit test bắt nhưng eval G11 không kiểm tra: truyền `urls` không phải list phải trả `invalid_input`; G11 chỉ kiểm tra routing và truyền một list URL. |
+| Unit test: `text_stats` (3 test cases) | `starter_v0/tests/test_text_stats.py` — `test_text_stats_happy_path_calculates_metrics`, `test_text_stats_bad_input_handles_gracefully`, `test_text_stats_failure_returns_error_dict` | Bao phủ đếm từ/câu/đoạn/thời gian đọc, input rỗng, ép kiểu wpm dạng chuỗi, và xử lý an toàn lỗi input. | Bắt các lỗi biên như `text=None`, `wpm <= 0` trả về error dict thay vì ném ngoại lệ làm sập agent. |
 | UI | `starter_v0/app.py`, `starter_v0/requirements.txt` | Chạy local bằng `cd starter_v0` rồi `python -m streamlit run app.py`; UI mặc định mở tại `http://localhost:8501`. | Chưa có link deploy công khai được ghi nhận. Cần cấu hình API key cho provider đã chọn; không đưa key vào báo cáo hoặc transcript. |
 
 **Trạng thái chạy unit test:** các test mới được liệt kê ở trên trong source; chưa ghi nhận output chạy pytest cho riêng các test này trong phần bằng chứng B5a.
