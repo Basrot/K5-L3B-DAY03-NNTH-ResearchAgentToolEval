@@ -2,7 +2,14 @@
   "dataset_id": "day03_v2_research_group",
   "dataset_role": "group",
   "description": "Case do NHÓM tự viết thêm để cover thêm trường hợp. Mỗi case cần: id, phase='B', query HOẶC turns, failure_type (thuộc allowed_failure_types), và expect (tool_calls[...] hoặc no_tool=true). Nên kèm metadata.what_it_tests.",
-  "allowed_failure_types": ["wrong_tool", "wrong_arg_value", "wrong_boundary", "unnecessary_tool", "out_of_scope", "missing_info"],
+  "allowed_failure_types": [
+    "wrong_tool",
+    "wrong_arg_value",
+    "wrong_boundary",
+    "unnecessary_tool",
+    "out_of_scope",
+    "missing_info"
+  ],
   "cases": [
     {
       "id": "G01_extract_keywords_route",
@@ -109,6 +116,182 @@
         "skill": "confirm_before_telegram_action",
         "difficulty": "medium",
         "what_it_tests": "Trước hành động gửi ra ngoài, phải xin xác nhận yes/no và không gọi send ngay trong cùng yêu cầu."
+      }
+    },
+    {
+      "id": "G06_multiturn_extract_keywords",
+      "phase": "B",
+      "turns": [
+        {
+          "role": "user",
+          "content": "Hãy phân tích đoạn văn sau: Machine learning and deep learning models have revolutionized natural language processing tasks."
+        },
+        {
+          "role": "user",
+          "content": "Trích xuất cho mình 3 từ khóa xuất hiện nhiều nhất trong đoạn văn trên."
+        },
+        {
+          "role": "user",
+          "content": "Đúng rồi, hãy lấy 3 từ khóa chính đó thôi nhé."
+        }
+      ],
+      "failure_type": "wrong_arg_value",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "extract_keywords",
+            "args": {
+              "text": "Machine learning and deep learning models have revolutionized natural language processing tasks.",
+              "top_k": 3
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "multiturn_extract_keywords_refinement",
+        "difficulty": "medium",
+        "what_it_tests": "Qua 3 lượt hội thoại: mang ngữ cảnh đoạn văn từ lượt trước sang lượt sau và gọi tool extract_keywords với top_k=3."
+      }
+    },
+    {
+      "id": "G07_multiturn_switch_to_arxiv",
+      "phase": "B",
+      "turns": [
+        {
+          "role": "user",
+          "content": "Tìm kiếm trên web về mô hình Reasoning Models."
+        },
+        {
+          "role": "user",
+          "content": "Không tìm web nữa, chuyển sang tìm bài báo học thuật trên arXiv giúp mình."
+        },
+        {
+          "role": "user",
+          "content": "Lấy 3 bài báo mới nhất về Reasoning Models trên arXiv."
+        }
+      ],
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "papers",
+            "args": {
+              "query": "Reasoning Models",
+              "max_results": 3
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "multiturn_switch_tool_web_to_arxiv",
+        "difficulty": "medium",
+        "what_it_tests": "Hủy yêu cầu tìm web ở lượt đầu, chuyển hẳn sang gọi tool papers với đúng từ khóa và giới hạn 3 kết quả."
+      }
+    },
+    {
+      "id": "G08_multiturn_timeline_correction",
+      "phase": "B",
+      "turns": [
+        {
+          "role": "user",
+          "content": "Lấy 5 bài đăng gần nhất trên Twitter của Andrej Karpathy."
+        },
+        {
+          "role": "user",
+          "content": "Đổi sang xem bài của Yann LeCun nhé."
+        },
+        {
+          "role": "user",
+          "content": "Lấy 3 bài thôi, vẫn của Yann LeCun."
+        }
+      ],
+      "failure_type": "wrong_arg_value",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "timeline",
+            "args": {
+              "screenname": "ylecun",
+              "limit": 3
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "multiturn_timeline_handle_and_limit",
+        "difficulty": "hard",
+        "what_it_tests": "Cập nhật tài khoản sang Yann LeCun (handle 'ylecun') và giảm giới hạn số lượng bài đăng từ 5 xuống 3."
+      }
+    },
+    {
+      "id": "G09_multiturn_lookup_timeframe",
+      "phase": "B",
+      "turns": [
+        {
+          "role": "user",
+          "content": "Tìm kiếm thông tin tổng quan về chất bán dẫn semiconductor."
+        },
+        {
+          "role": "user",
+          "content": "Đổi sang tìm tin tức mới nhất về semiconductor nhé."
+        },
+        {
+          "role": "user",
+          "content": "Chỉ tìm tin tức về semiconductor trong tháng qua thôi."
+        }
+      ],
+      "failure_type": "wrong_arg_value",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "query": "semiconductor",
+              "topic": "news",
+              "timeframe": "month"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "multiturn_lookup_topic_and_timeframe",
+        "difficulty": "medium",
+        "what_it_tests": "Chuyển topic='general' sang topic='news' và cập nhật timeframe='month' cho chủ đề semiconductor qua nhiều lượt."
+      }
+    },
+    {
+      "id": "G10_multiturn_confirmed_send",
+      "phase": "B",
+      "turns": [
+        {
+          "role": "user",
+          "content": "Gửi bản tin sau lên Telegram: 'Nghiên cứu mới về Agentic AI vừa được công bố.'"
+        },
+        {
+          "role": "assistant",
+          "content": "Bạn có xác nhận muốn gửi bản tin 'Nghiên cứu mới về Agentic AI vừa được công bố.' lên kênh Telegram không?"
+        },
+        {
+          "role": "user",
+          "content": "Tôi xác nhận đồng ý, hãy gửi ngay bản tin đó lên Telegram."
+        }
+      ],
+      "failure_type": "wrong_boundary",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "send",
+            "args": {
+              "text": "Nghiên cứu mới về Agentic AI vừa được công bố.",
+              "confirmed": true
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "multiturn_confirmed_send_execution",
+        "difficulty": "hard",
+        "what_it_tests": "Sau khi bot đã hỏi xác nhận và user đã xác nhận rõ ràng ở lượt 3, agent gọi tool send với confirmed=true."
       }
     }
   ]

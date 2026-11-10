@@ -9,7 +9,8 @@
 ## 2. Phần việc phụ trách
 
 - **CP3 (Tool mới & Unit Test):** Nghiên cứu hợp đồng tool (`tools/README.md`), thiết kế và cài đặt tool mới `extract_keywords` phục vụ bài toán tóm lược/trích xuất từ khóa cho Research Agent; đăng ký tool trong registry và schema hệ thống; viết bộ unit tests bao phủ các nhánh.
-- **CP2 (Tối ưu vòng `v3`):** Phối hợp cùng nhóm nhận bản `v2`, phân tích các case còn lại để đưa ra một giả thuyết tối ưu cuối cùng, chạy eval và ghi nhận version log `v3`.
+- **CP4 (Bộ Eval của nhóm — 5 Multi-turn cases):** Thiết kế và cài đặt 5 test cases dạng multi-turn (`turns`) trong `starter_v0/data/eval_group.json` (từ `G06` đến `G10`), bao gồm kiểm tra tool mới `extract_keywords`, switch tool, chuyển đổi ngữ cảnh, và xác nhận Telegram boundary qua nhiều lượt.
+- **CP2 (Tối ưu prompt/tools & phối hợp):** Phối hợp cùng nhóm kiểm thử và đồng bộ các phiên bản v1, v2, v3.
 
 ## 3. Đóng góp cụ thể
 
@@ -24,13 +25,23 @@
     3. Failure branch: kiểm tra bắt lỗi an toàn khi truyền sai kiểu dữ liệu (`text=None`) hoặc `top_k <= 0`.
   - Chạy `pytest` xác nhận: `tests/test_tool_contract.py` pass 60/60 checks, toàn suite pass 70/70 tests, 0 failed.
 
+- **Viết 5 Multi-turn Eval Cases cho nhóm (CP4):**
+  - Viết 5 case multi-turn hoàn chỉnh trong `starter_v0/data/eval_group.json` (`G06` đến `G10`), kết hợp cùng 5 case single-turn của bạn Ngọc để hoàn thành đủ 10 case:
+    1. `G06_multiturn_extract_keywords`: Kiểm thử trích xuất từ khóa với ngữ cảnh đoạn văn và cập nhật `top_k=3` qua nhiều lượt.
+    2. `G07_multiturn_switch_to_arxiv`: Kiểm thử đổi từ tìm web sang tìm bài báo trên arXiv (`papers`).
+    3. `G08_multiturn_timeline_correction`: Kiểm thử đổi handle Twitter sang `ylecun` và cập nhật giới hạn bài đăng từ 5 thành 3.
+    4. `G09_multiturn_lookup_timeframe`: Kiểm thử cập nhật chủ đề bán dẫn, chuyển `topic='news'` và `timeframe='month'`.
+    5. `G10_multiturn_confirmed_send`: Kiểm thử quy trình xác nhận Telegram đầy đủ qua các lượt hỏi - đáp và gọi `send(confirmed=true)`.
+  - Kiểm tra tính tương thích với hàm chấm `run_eval.py` và bảo đảm không vi phạm hợp đồng schema.
+
 ## 4. Bằng chứng
 
 - File/commit/PR:
-  - Tool source & docs: `starter_v0/tools/extract_keywords/tool.py`, `TOOL.md` (commit `1f527c4` trên branch `2A202603732_TranTrongDucTai`)
+  - Tool source & docs: `starter_v0/tools/extract_keywords/tool.py`, `TOOL.md`
   - Registry & schema: `starter_v0/tools/__init__.py`, `starter_v0/artifacts/tools.yaml`
   - Unit tests: `starter_v0/tests/test_tools_todo.py`
-  - Báo cáo nhóm: Mục CP3, Bảng B5 trong `report/team/group_report.md`
+  - Eval group cases (G06-G10): `starter_v0/data/eval_group.json`
+  - Báo cáo nhóm: Mục CP3, CP4 trong `report/team/group_report.md`
 - AI/công cụ đã dùng và cách tự kiểm tra kết quả:
   - Dùng `pytest` offline để kiểm tra hợp đồng schema và unit tests, đảm bảo 0 failed.
 
