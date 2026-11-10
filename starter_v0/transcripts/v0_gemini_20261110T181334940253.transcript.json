@@ -1,0 +1,28 @@
+{
+  "transcript_id": "v0_gemini_20261110T181334940253",
+  "version": "v0",
+  "artifact_version": "v0+peb1c8179815b+te69bc53ed884",
+  "prompt_hash": "eb1c8179815bd79d34de7d326420bb99b3072e6e8ae96464c02d4411f905fc68",
+  "tools_hash": "e69bc53ed8846a5c2192e950c539806a61a6902b718f06d6773db6a42e9b996c",
+  "provider": "gemini",
+  "model": null,
+  "system_prompt": "C:\\Users\\Admin\\Desktop\\Vinuni_AI\\K5-L3-DAY03-NNHH-ResearchAgentToolEval\\starter_v0\\artifacts\\system_prompt.md",
+  "tools": "C:\\Users\\Admin\\Desktop\\Vinuni_AI\\K5-L3-DAY03-NNHH-ResearchAgentToolEval\\starter_v0\\artifacts\\tools.yaml",
+  "history_window": 5,
+  "max_tool_rounds": 4,
+  "created_at": "2026-11-10T18:13:34",
+  "updated_at": "2026-11-10T18:14:03",
+  "turns": [
+    {
+      "turn_index": 1,
+      "started_at": "2026-11-10T18:13:56",
+      "user": "Xin chào bạn có thể giúp mẹ gì cho tôi ?",
+      "status": "provider_error",
+      "assistant_text": null,
+      "rounds": [],
+      "tool_events": [],
+      "error": "ServerError: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}",
+      "ended_at": "2026-11-10T18:14:03"
+    }
+  ]
+}
