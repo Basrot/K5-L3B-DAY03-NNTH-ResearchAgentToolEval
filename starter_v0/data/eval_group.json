@@ -3,5 +3,113 @@
   "dataset_role": "group",
   "description": "Case do NHÓM tự viết thêm để cover thêm trường hợp. Mỗi case cần: id, phase='B', query HOẶC turns, failure_type (thuộc allowed_failure_types), và expect (tool_calls[...] hoặc no_tool=true). Nên kèm metadata.what_it_tests.",
   "allowed_failure_types": ["wrong_tool", "wrong_arg_value", "wrong_boundary", "unnecessary_tool", "out_of_scope", "missing_info"],
-  "cases": []
+  "cases": [
+    {
+      "id": "G01_extract_keywords_route",
+      "phase": "B",
+      "query": "Trích xuất 3 từ khóa quan trọng trong đoạn này: AI agents can help researchers organize papers. AI agents also support literature review.",
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "extract_keywords",
+            "args": {
+              "text": "AI agents can help researchers organize papers. AI agents also support literature review.",
+              "top_k": 3
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "route_new_extract_keywords_tool",
+        "difficulty": "medium",
+        "what_it_tests": "Yêu cầu trích từ khóa từ văn bản đã cho phải gọi tool mới extract_keywords và truyền đúng văn bản cùng top_k=3."
+      }
+    },
+    {
+      "id": "G02_arxiv_paper_search",
+      "phase": "B",
+      "query": "Tìm tối đa 3 bài báo khoa học trên arXiv về retrieval-augmented generation.",
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "papers",
+            "args": {
+              "query": "retrieval-augmented generation",
+              "max_results": 3
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "route_academic_paper_search",
+        "difficulty": "medium",
+        "what_it_tests": "Yêu cầu tìm bài báo khoa học trên arXiv phải gọi papers thay vì lookup web."
+      }
+    },
+    {
+      "id": "G03_internal_data_privacy_policy",
+      "phase": "B",
+      "query": "Theo chính sách nội bộ về quyền riêng tư dữ liệu, nhóm có được đưa dữ liệu cá nhân lên công cụ AI bên ngoài không?",
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "policy",
+            "args": {
+              "policy_area": "data_privacy"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "route_internal_policy",
+        "difficulty": "medium",
+        "what_it_tests": "Câu hỏi về quy định nội bộ quyền riêng tư phải tra cứu policy_area=data_privacy, không tìm trên web công khai."
+      }
+    },
+    {
+      "id": "G04_missing_arxiv_identifier",
+      "phase": "B",
+      "query": "Đọc và tóm tắt nội dung PDF của bài arXiv này giúp tôi.",
+      "failure_type": "missing_info",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "response_type": "text"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "clarify_missing_arxiv_identifier",
+        "difficulty": "medium",
+        "what_it_tests": "Thiếu arXiv ID hoặc URL thì hỏi người dùng bổ sung, không đoán bài và không gọi paper_text."
+      }
+    },
+    {
+      "id": "G05_confirm_before_telegram_send",
+      "phase": "B",
+      "query": "Gửi bản tin \"Tóm tắt nghiên cứu AI tuần này\" lên Telegram cho nhóm.",
+      "failure_type": "wrong_boundary",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "response_type": "yes_no"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "confirm_before_telegram_action",
+        "difficulty": "medium",
+        "what_it_tests": "Trước hành động gửi ra ngoài, phải xin xác nhận yes/no và không gọi send ngay trong cùng yêu cầu."
+      }
+    }
+  ]
 }
