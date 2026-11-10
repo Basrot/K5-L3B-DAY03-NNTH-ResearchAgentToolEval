@@ -16,12 +16,12 @@
 tools:
   # ---------------- Core tools ----------------
   - name: clarify
-    description: "Hỏi lại người dùng khi yêu cầu thiếu thông tin bắt buộc (như thiếu tên tài khoản/handle khi lấy tweet cá nhân, hoặc thiếu đường dẫn URL khi yêu cầu đọc/tóm tắt bài viết). Không dùng khi đã đủ thông tin hoặc khi câu hỏi nằm ngoài phạm vi research."
+    description: "Hỏi lại người dùng khi yêu cầu thiếu thông tin bắt buộc (như thiếu tên tài khoản/handle khi lấy tweet cá nhân, hoặc thiếu đường dẫn URL khi yêu cầu đọc/tóm tắt bài viết). Cũng phải dùng để xin xác nhận trước hành động có tác dụng bên ngoài như gửi/đăng lên Telegram. Với xác nhận gửi/đăng, đặt response_type='yes_no' và hỏi người dùng có xác nhận gửi nội dung hiện có không; không hỏi lại nội dung bằng response_type='text' trừ khi nội dung thực sự chưa có. Không dùng khi đã đủ thông tin hoặc khi câu hỏi nằm ngoài phạm vi research."
     parameters:
       type: object
       properties:
         question: {type: string, default: "", description: "Câu hỏi ngắn gọn, rõ ràng gửi cho người dùng để xin thông tin còn thiếu."}
-        response_type: {type: string, enum: [text, yes_no, choice], default: "text", description: "Kiểu câu trả lời mong đợi: 'text' khi hỏi thông tin mở (tài khoản, URL), 'yes_no' khi hỏi có/không, 'choice' khi đưa danh sách lựa chọn."}
+        response_type: {type: string, enum: [text, yes_no, choice], default: "text", description: "Kiểu câu trả lời mong đợi: 'text' khi hỏi thông tin mở còn thiếu (tài khoản, URL), 'yes_no' khi xin xác nhận trước hành động gửi/đăng hoặc hỏi có/không, 'choice' khi đưa danh sách lựa chọn."}
         options: {type: array, default: [], items: {type: string}, description: "Danh sách lựa chọn khi response_type='choice'."}
       required: [question]
 
@@ -35,7 +35,7 @@ tools:
       required: [screenname]
 
   - name: social_search
-    description: "Tìm kiếm các bài đăng (tweet) trên mạng xã hội X/Twitter theo từ khóa hoặc chủ đề. Dùng khi muốn biết cộng đồng đang bàn luận gì về một chủ đề. Không dùng để lấy timeline của một cá nhân cụ thể (hãy dùng timeline) và không dùng để tìm tin tức báo chí trên web (hãy dùng lookup)."
+    description: "Tìm kiếm các bài đăng (tweet) trên mạng xã hội X/Twitter theo từ khóa hoặc chủ đề. Chỉ gọi khi yêu cầu ở lượt người dùng mới nhất muốn tìm bài đăng trên mạng xã hội. Không gọi nếu lượt mới nhất nói bỏ Twitter/chuyển sang web, kể cả khi lượt trước đó nhắc đến Twitter; khi đó dùng lookup nếu họ yêu cầu tin tức web. Dùng khi muốn biết cộng đồng đang bàn luận gì về một chủ đề. Không dùng để lấy timeline của một cá nhân cụ thể (hãy dùng timeline), tìm tin tức báo chí trên web (hãy dùng lookup), hoặc khi người dùng yêu cầu cả web và mạng xã hội trong cùng một yêu cầu (khi đó gọi cả hai tool)."
     parameters:
       type: object
       properties:
@@ -45,7 +45,7 @@ tools:
       required: [query]
 
   - name: lookup
-    description: "Tìm kiếm thông tin hoặc tin tức trên web. Dùng khi cần tra cứu tin tức thời sự hoặc thông tin tổng hợp trên internet. Không dùng khi người dùng đã đưa sẵn một URL cụ thể cần đọc (hãy dùng fetch) hoặc khi tìm bài đăng mạng xã hội (hãy dùng social_search)."
+    description: "Tìm kiếm thông tin hoặc tin tức trên web. Dùng khi yêu cầu ở lượt người dùng mới nhất muốn tra cứu tin tức thời sự hoặc thông tin tổng hợp trên internet. Nếu người dùng nói bỏ Twitter/chuyển sang web, chỉ gọi lookup và không gọi social_search chỉ vì lượt trước có nhắc đến Twitter. Không gọi social_search cùng lúc, trừ khi chính yêu cầu mới nhất yêu cầu rõ ràng cả tin web và bài đăng mạng xã hội. Không dùng khi người dùng đã đưa sẵn một URL cụ thể cần đọc (hãy dùng fetch) hoặc khi chỉ yêu cầu tìm bài đăng mạng xã hội (hãy dùng social_search)."
     parameters:
       type: object
       properties:
@@ -86,12 +86,12 @@ tools:
 
   # ---------------- Bonus tools ----------------
   - name: send
-    description: "Gửi bản tin văn bản lên kênh Telegram. Không bao giờ dùng tool này để trả lời câu hỏi thông thường, giải toán hay viết code của người dùng."
+    description: "Gửi bản tin văn bản lên kênh Telegram. Đây là hành động có tác dụng bên ngoài: KHÔNG gọi tool này chỉ vì người dùng yêu cầu gửi/đăng. Trước tiên phải dùng clarify với response_type='yes_no' để xin xác nhận. Chỉ gọi send sau khi người dùng trả lời xác nhận rõ ràng ở một lượt sau cho nội dung cần gửi; khi gọi phải đặt confirmed=true. Không bao giờ dùng tool này để trả lời câu hỏi thông thường, giải toán hay viết code của người dùng."
     parameters:
       type: object
       properties:
         text: {type: string, default: "", description: "Nội dung văn bản cần gửi lên Telegram."}
-        confirmed: {type: boolean, default: false, description: "Cờ xác nhận gửi."}
+        confirmed: {type: boolean, default: false, description: "Phải là true chỉ sau khi người dùng xác nhận rõ ràng nội dung cần gửi trong một lượt riêng sau yêu cầu ban đầu. Yêu cầu gửi ban đầu không phải là xác nhận; nếu chưa xác nhận, không gọi send mà hãy dùng clarify."}
       required: [text]
 
   - name: policy
