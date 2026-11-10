@@ -133,3 +133,13 @@ tools:
         top_k: {type: integer, default: 5, description: "Số lượng từ khóa hàng đầu cần lấy"}
       required: [text]
 
+  - name: deduplicate_sources
+    description: "Loại bỏ URL nguồn trùng lặp khỏi danh sách URL đã thu thập, giữ lần xuất hiện đầu tiên và thứ tự ban đầu. Chỉ dùng để gộp danh sách URL HTTP(S) đã có, không dùng để tìm kiếm hay đọc nội dung nguồn. Bỏ qua fragment và dấu gạch chéo cuối khi nhận diện trùng lặp; giữ nguyên query string."
+    parameters:
+      type: object
+      properties:
+        urls:
+          type: array
+          description: "Danh sách URL HTTP(S) cần loại trùng."
+          items: {type: string}
+      required: [urls]

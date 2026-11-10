@@ -293,6 +293,33 @@
         "difficulty": "hard",
         "what_it_tests": "Sau khi bot đã hỏi xác nhận và user đã xác nhận rõ ràng ở lượt 3, agent gọi tool send với confirmed=true."
       }
+    },
+    {
+      "id": "G11_deduplicate_sources_urls",
+      "phase": "B",
+      "query": "Loại bỏ các URL trùng lặp trong danh sách sau, giữ nguyên thứ tự và bỏ qua phần fragment, trailing slash, nhưng giữ lại query string: https://Example.com/paper/#abstract, https://example.com/paper, https://example.com/paper?download=1, ftp://example.com/file, not-a-url.",
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "deduplicate_sources",
+            "args": {
+              "urls": [
+                "https://Example.com/paper/#abstract",
+                "https://example.com/paper",
+                "https://example.com/paper?download=1",
+                "ftp://example.com/file",
+                "not-a-url"
+              ]
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "route_deduplicate_sources_tool",
+        "difficulty": "medium",
+        "what_it_tests": "Yêu cầu bỏ trùng URL nguồn phải gọi tool deduplicate_sources với list urls, không dùng tìm kiếm web hoặc xử lý thủ công."
+      }
     }
   ]
 }
