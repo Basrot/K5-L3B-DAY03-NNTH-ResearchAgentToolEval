@@ -2,8 +2,8 @@
 
 ## Thông tin nhóm
 
-- Tên nhóm:
-- Lớp: L3A / L3B
+- Tên nhóm: NNTH
+- Lớp: L3B
 - Repo nhóm: `K5-L3A-DAY03-TenNhom-ResearchAgentToolEval` hoặc `K5-L3B-DAY03-TenNhom-ResearchAgentToolEval` (xem [SUBMISSION.md](SUBMISSION.md))
 - URL repo, nhánh nộp, commit chốt:
 

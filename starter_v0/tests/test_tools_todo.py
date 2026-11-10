@@ -110,13 +110,45 @@ def test_policy_instruction_like_lines_go_to_untrusted_text() -> None:
 #   2. bad / missing input from the model (empty string, wrong type, out-of-enum value)
 #   3. failure path (missing key, HTTP error, timeout) -> returns error dict, does not raise
 
-def test_my_new_tool_happy_path() -> None:
-    pytest.skip(TODO)
+def test_extract_keywords_happy_path_returns_top_frequent_words() -> None:
+    text = "AI agent is an autonomous agent. An agent uses tools to solve research tasks."
+    result = TOOL_FUNCTIONS["extract_keywords"](text=text, top_k=3)
+    assert result.get("tool") == "extract_keywords"
+    assert "keywords" in result
+    assert len(result["keywords"]) == 3
+    # "agent" appears 3 times and is not a stop word -> should be rank 1
+    assert result["keywords"][0]["keyword"] == "agent"
+    assert result["keywords"][0]["count"] == 3
+    assert result["total_words"] == 14
 
 
-def test_my_new_tool_bad_input_from_model() -> None:
-    pytest.skip(TODO)
+def test_extract_keywords_bad_input_from_model_handles_gracefully() -> None:
+    # 1. Empty string input
+    empty_res = TOOL_FUNCTIONS["extract_keywords"](text="")
+    assert empty_res.get("keywords") == []
+    assert empty_res.get("total_words") == 0
+
+    # 2. Whitespace-only string
+    ws_res = TOOL_FUNCTIONS["extract_keywords"](text="   \n\t  ")
+    assert ws_res.get("keywords") == []
+
+    # 3. Model passes integer as string (e.g. top_k="2")
+    str_k_res = TOOL_FUNCTIONS["extract_keywords"](
+        text="machine learning and deep learning models", top_k="2"
+    )
+    assert len(str_k_res["keywords"]) == 2
+    assert str_k_res["keywords"][0]["keyword"] == "learning"
+    assert str_k_res["keywords"][0]["count"] == 2
 
 
-def test_my_new_tool_failure_returns_error_dict() -> None:
-    pytest.skip(TODO)
+def test_extract_keywords_failure_returns_error_dict() -> None:
+    # 1. Invalid text type (e.g. None or int) -> returns error dict without crashing
+    res_type = TOOL_FUNCTIONS["extract_keywords"](text=None)
+    assert "error" in res_type
+    assert res_type["error"] == "invalid_input"
+
+    # 2. Invalid top_k (e.g. <= 0) -> returns error dict without crashing
+    res_k = TOOL_FUNCTIONS["extract_keywords"](text="hello world", top_k=0)
+    assert "error" in res_k
+    assert res_k["error"] == "invalid_top_k"
+
