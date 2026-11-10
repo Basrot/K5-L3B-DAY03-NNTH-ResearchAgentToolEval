@@ -53,21 +53,27 @@ Sao chép mục dưới đây cho từng thành viên.
 
 ### Phần việc phụ trách
 
-- CP2 — phân tích lỗi còn lại của v1 và tối ưu khai báo tool cho v2, tập trung vào boundary xác nhận trước khi gửi (R12).
-- Phối hợp kiểm tra kết quả eval sau khi nhóm chạy v2 bằng cấu hình API đầy đủ.
+- CP2 — phân tích lỗi R12 và cải tiến `artifacts/tools.yaml` theo từng giả thuyết cho v2 và v3.
+- CP4 — viết 5 case eval single-turn trong `data/eval_group.json`, bao gồm case route tới tool mới `extract_keywords`.
 
 ### Đóng góp cụ thể
 
-- Phân tích case `R12_confirm_before_send` trong run v1: agent gọi `send` với `confirmed=false` thay vì hỏi xác nhận trước.
-- Cập nhật `starter_v0/artifacts/tools.yaml` để yêu cầu `clarify` với `response_type="yes_no"` trước khi gửi; chỉ gọi `send` khi người dùng xác nhận rõ ràng ở lượt sau và đặt `confirmed=true`.
-- Giữ thay đổi v2 tập trung vào R12; không thay đổi system prompt hoặc quy tắc chuyển nguồn ở M06.
-- Kết quả v2 cần được xác minh bằng run mới với API keys đầy đủ; chưa ghi nhận metric v2 tại thời điểm báo cáo.
+- Phân tích `R12_confirm_before_send` ở run v1: agent gọi `send` với `confirmed=false` thay vì xin xác nhận trước.
+- V2: cập nhật boundary trong mô tả `clarify` và `send`; run đạt 19/20, nhưng R12 vẫn dùng `response_type="text"` thay vì `"yes_no"`.
+- V3: làm rõ xác nhận yes/no phải là bước đầu tiên cho yêu cầu gửi Telegram, kể cả khi nội dung chưa rõ. Run đạt 20/20; R12 gọi `clarify` với `response_type="yes_no"`.
+- Thêm 5 case single-turn: route tới `extract_keywords`, tìm bài arXiv bằng `papers`, tra cứu chính sách nội bộ bằng `policy`, hỏi khi thiếu arXiv ID/URL, và xác nhận trước khi gửi Telegram.
+- `eval_group.json` hiện có 5 case single-turn; 5 case multi-turn và group eval run vẫn cần được bổ sung để hoàn tất CP4.
 
 ### Bằng chứng
 
-- Run v1: `starter_v0/runs/v1_B_base_openrouter_20261110T180455272193.json` (case `R12_confirm_before_send`).
 - Khai báo tool: `starter_v0/artifacts/tools.yaml`.
-- Commit thay đổi R12: `55fb0c7` (`fix: update R12 tool.yaml`).
+- Eval cases: `starter_v0/data/eval_group.json`.
+- Run v1: `starter_v0/runs/v1_B_base_openrouter_20261110T180455272193.json`.
+- Run v2: `starter_v0/runs/v2_B_base_openrouter_20261110T185059346257.json` (19/20; R12 sai `response_type`).
+- Run v3: `starter_v0/runs/v3_B_base_openrouter_20261110T191036287347.json` (20/20; R12 đúng `response_type="yes_no"`).
+- Version log: `starter_v0/artifacts/version_log.csv`.
+- Commit: `55fb0c7` (thay đổi cho v2), `de2d24d` (thay đổi cho v3), `44059ba` (5 case single-turn).
+- Kiểm tra contract: `pytest tests/test_tool_contract.py -q` — 60 passed.
 - Báo cáo cá nhân: `report/team/2A202603788_ThieuTheNgoc.md`.
 
 ## TranTrongDucTai-2A202603732
