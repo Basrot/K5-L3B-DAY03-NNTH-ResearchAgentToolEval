@@ -122,7 +122,17 @@ Lấy từ `results[*].result.failures` trong run JSON (`starter_v0/runs/v0_B_ba
 
 ### B3. Team Eval Cases
 
-`starter_v0/data/eval_group.json` hiện có 11 case (6 single-turn + 5 multi-turn). Run v3 dưới đây được tạo trước khi thêm G11 và chỉ đo G01–G10: **10/10 PASS** (`case_accuracy: 1.0`, `tool_routing_accuracy: 1.0`, `argument_accuracy: 1.0`, `multiturn_accuracy: 1.0`, `provider_error_cases: 0`). G11 chưa có kết quả chạy, không tính vào các metric này.
+Bộ `starter_v0/data/eval_group.json` hiện gồm 12 case,
+trong đó có 7 single-turn và 5 multi-turn.
+
+- Bộ ban đầu G01–G10: OpenRouter/GPT-4o-mini đạt
+  10/10 PASS, không có lỗi provider.
+- Bộ mở rộng G01–G12: Gemini 3.5 Flash Lite đạt
+  9/12 PASS, không có lỗi provider.
+- Ba case Gemini chưa đạt: G01, G06, G12.
+
+Kết quả của hai lần chạy được trình bày riêng vì
+sử dụng model và số lượng test case khác nhau.
 
 | Case ID | What It Tests | Expected Tool/Behavior | Result |
 |---|---|---|---|
