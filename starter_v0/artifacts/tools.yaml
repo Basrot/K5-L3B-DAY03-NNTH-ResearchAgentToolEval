@@ -16,12 +16,12 @@
 tools:
   # ---------------- Core tools ----------------
   - name: clarify
-    description: "Hỏi lại người dùng khi yêu cầu thiếu thông tin bắt buộc (như thiếu tên tài khoản/handle khi lấy tweet cá nhân, hoặc thiếu đường dẫn URL khi yêu cầu đọc/tóm tắt bài viết). Không dùng khi đã đủ thông tin hoặc khi câu hỏi nằm ngoài phạm vi research."
+    description: "Hỏi lại người dùng khi yêu cầu thiếu thông tin bắt buộc (như thiếu tên tài khoản/handle khi lấy tweet cá nhân, hoặc thiếu đường dẫn URL khi yêu cầu đọc/tóm tắt bài viết). Trước hành động có tác dụng bên ngoài như gửi/đăng lên Telegram, dùng clarify với response_type='yes_no' để xin xác nhận rõ ràng; yêu cầu gửi ban đầu không được xem là xác nhận. Không dùng khi đã đủ thông tin hoặc khi câu hỏi nằm ngoài phạm vi research."
     parameters:
       type: object
       properties:
         question: {type: string, default: "", description: "Câu hỏi ngắn gọn, rõ ràng gửi cho người dùng để xin thông tin còn thiếu."}
-        response_type: {type: string, enum: [text, yes_no, choice], default: "text", description: "Kiểu câu trả lời mong đợi: 'text' khi hỏi thông tin mở (tài khoản, URL), 'yes_no' khi hỏi có/không, 'choice' khi đưa danh sách lựa chọn."}
+        response_type: {type: string, enum: [text, yes_no, choice], default: "text", description: "Kiểu câu trả lời mong đợi: 'text' khi hỏi thông tin mở còn thiếu (như tài khoản hoặc URL), 'yes_no' để xin xác nhận trước hành động gửi/đăng hoặc hỏi có/không, 'choice' khi đưa danh sách lựa chọn."}
         options: {type: array, default: [], items: {type: string}, description: "Danh sách lựa chọn khi response_type='choice'."}
       required: [question]
 
@@ -86,12 +86,12 @@ tools:
 
   # ---------------- Bonus tools ----------------
   - name: send
-    description: "Gửi bản tin văn bản lên kênh Telegram. Không bao giờ dùng tool này để trả lời câu hỏi thông thường, giải toán hay viết code của người dùng."
+    description: "Gửi bản tin văn bản lên kênh Telegram. Không gọi tool này chỉ dựa trên yêu cầu gửi/đăng ban đầu. Trước tiên phải xin xác nhận rõ ràng bằng clarify(response_type='yes_no'); chỉ gọi send sau khi người dùng xác nhận ở lượt sau, với confirmed=true. Không bao giờ dùng tool này để trả lời câu hỏi thông thường, giải toán hay viết code của người dùng."
     parameters:
       type: object
       properties:
         text: {type: string, default: "", description: "Nội dung văn bản cần gửi lên Telegram."}
-        confirmed: {type: boolean, default: false, description: "Cờ xác nhận gửi."}
+        confirmed: {type: boolean, default: false, description: "Chỉ đặt true sau khi người dùng xác nhận rõ ràng nội dung cần gửi ở lượt sau. Yêu cầu gửi ban đầu không phải là xác nhận."}
       required: [text]
 
   - name: policy
