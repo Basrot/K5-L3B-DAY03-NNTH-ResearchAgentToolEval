@@ -57,8 +57,8 @@ Sao chép mục dưới đây cho từng thành viên.
 - Dependencies: `starter_v0/requirements.txt`.
 - Backend tích hợp: `starter_v0/chat.py`.
 - Transcript kiểm thử: `starter_v0/transcripts/v0_gemini_20261110T181508022586.transcript.json`.
-- Live Chat trên Streamlit Cloud: [BỔ SUNG ĐƯỜNG DẪN FILE TRANSCRIPT ĐÃ TẢI VÀ COMMIT].
-- Website demo công khai: [BỔ SUNG URL `.streamlit.app`].
+- Live Chat trên Streamlit Cloud: [Bằng chứng hội thoại và Tool Calling](starter_v0/transcripts/].
+- Website demo công khai: [https://vinuni-research-agent-nhth.streamlit.app/].
 - Merge commit tích hợp UI: `1566ce9`.
 - Báo cáo cá nhân: `report/team/2A202603761_NguyenGiaNam.md`.
 - Báo cáo nhóm: `report/team/group_report.md` (các mục A1, A3, B4, B5a và khó khăn triển khai).
