@@ -83,11 +83,20 @@ Lấy từ `results[*].result.failures` trong run JSON (`starter_v0/runs/v0_B_ba
 
 ### B3. Team Eval Cases
 
-Liệt kê đúng 10 case trong `starter_v0/data/eval_group.json` (5 single turn + 5 multi turn).
+Liệt kê đúng 10 case trong `starter_v0/data/eval_group.json` (5 single turn + 5 multi turn). Kết quả chạy thực tế trên `v3` (`starter_v0/runs/v3_B_group_openrouter_20261110T193715824551.json`, `artifact_version: v3+p9899d34c0a9d+tf4fef6d67931`) đạt **10/10 PASS (`case_accuracy: 1.0`, `tool_routing_accuracy: 1.0`, `argument_accuracy: 1.0`, `multiturn_accuracy: 1.0`, `provider_error_cases: 0`)**:
 
 | Case ID | What It Tests | Expected Tool/Behavior | Result |
 |---|---|---|---|
-|  |  |  |  |
+| `G01_extract_keywords_route` (Single-turn) | Yêu cầu trích từ khóa từ văn bản đã cho phải gọi tool mới `extract_keywords` và truyền đúng văn bản cùng `top_k=3`. | `extract_keywords(text="AI agents can help researchers organize papers. AI agents also support literature review.", top_k=3)` | **PASS** |
+| `G02_arxiv_paper_search` (Single-turn) | Yêu cầu tìm bài báo khoa học trên arXiv phải gọi `papers` thay vì `lookup` web. | `papers(query="retrieval-augmented generation", max_results=3)` | **PASS** |
+| `G03_internal_data_privacy_policy` (Single-turn) | Câu hỏi về quy định nội bộ quyền riêng tư phải tra cứu `policy_area="data_privacy"`, không tìm trên web công khai. | `policy(policy_area="data_privacy")` | **PASS** |
+| `G04_missing_arxiv_identifier` (Single-turn) | Thiếu arXiv ID hoặc URL thì hỏi người dùng bổ sung, không đoán bài và không gọi `paper_text`. | `clarify(response_type="text")` | **PASS** |
+| `G05_confirm_before_telegram_send` (Single-turn) | Trước hành động gửi ra ngoài, phải xin xác nhận `yes_no` và không gọi `send` ngay trong cùng yêu cầu. | `clarify(response_type="yes_no")` | **PASS** |
+| `G06_multiturn_extract_keywords` (Multi-turn) | Qua 3 lượt hội thoại: mang ngữ cảnh đoạn văn từ lượt trước sang lượt sau và gọi tool `extract_keywords` với `top_k=3`. | `extract_keywords(text="Machine learning and deep learning models have revolutionized natural language processing tasks.", top_k=3)` | **PASS** |
+| `G07_multiturn_switch_to_arxiv` (Multi-turn) | Hủy yêu cầu tìm web ở lượt đầu, chuyển hẳn sang gọi tool `papers` với đúng từ khóa và giới hạn 3 kết quả. | `papers(query="Reasoning Models", max_results=3)` | **PASS** |
+| `G08_multiturn_timeline_correction` (Multi-turn) | Cập nhật tài khoản sang Yann LeCun (handle `"ylecun"`) và giảm giới hạn số lượng bài đăng từ 5 xuống 3. | `timeline(screenname="ylecun", limit=3)` | **PASS** |
+| `G09_multiturn_lookup_timeframe` (Multi-turn) | Chuyển `topic="general"` sang `topic="news"` và cập nhật `timeframe="month"` cho chủ đề `semiconductor` qua nhiều lượt. | `lookup(query="semiconductor", topic="news", timeframe="month")` | **PASS** |
+| `G10_multiturn_confirmed_send` (Multi-turn) | Sau khi bot đã hỏi xác nhận và user đã xác nhận rõ ràng ở lượt 3, agent gọi tool `send` với `confirmed=true`. | `send(text="Nghiên cứu mới về Agentic AI vừa được công bố.", confirmed=true)` | **PASS** |
 
 ### B4. Live Chat Evidence
 
