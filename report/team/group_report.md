@@ -8,9 +8,9 @@
 
 ## 1. Thông tin nhóm
 
-- Tên nhóm:
+- Tên nhóm: **NNTH** (Lớp L3B)
 - Thành viên và phân công: xem [TEAM.md](../../TEAM.md)
-- Provider/model dùng cho v0–v3:
+- Provider/model dùng cho v0–v3: `openrouter` / `openai/gpt-4o-mini`
 
 ## 2. Mục tiêu và cách tiếp cận — PHẦN A: Giới thiệu agent
 
@@ -62,18 +62,24 @@ Lấy từ `starter_v0/artifacts/version_log.csv` và `starter_v0/runs/*.json`. 
 
 | Version | Changed Artifact | Hypothesis | Metric Before | Metric After | Run File |
 |---|---|---|---:|---:|---|
-| v0 | baseline |  |  |  |  |
-| v1 |  |  |  |  |  |
+| v0 | baseline | Đo hành vi chưa tối ưu trước khi sửa (`system_prompt.md` + `tools.yaml` gốc) | — | 0.65 (routing: 0.75, args: 0.65, multiturn: 1.00) | `starter_v0/runs/v0_B_base_openrouter_20261110T173950199134.json` |
+| v1 |  |  | 0.65 |  |  |
 | v2 |  |  |  |  |  |
 | v3 |  |  |  |  |  |
 
 ### B2. Failure Analysis
 
-Lấy từ `results[*].result.failures` trong run JSON.
+Lấy từ `results[*].result.failures` trong run JSON (`starter_v0/runs/v0_B_base_openrouter_20261110T173950199134.json`). Trong 20 case của `eval_base.json`, baseline `v0` đạt **13/20 PASS (65%)** và **7/20 FAIL (35%)**:
 
-| Case ID | Failure Type | Actual Tool Calls | What Failed | Fix |
+| Case ID | Failure Type (`observed_mismatch`) | Actual Tool Calls | What Failed | Fix |
 |---|---|---|---|---|
-|  |  |  |  |  |
+| `R03_web_news_routing` | `wrong_tool` (`wrong_arg_value`) | `lookup(query="AI news", topic="news", timeframe="day", max_results=5)` | `query: expected 'AI', got 'AI news'` — Model chọn đúng tool `lookup` và `topic="news"`, nhưng nhét thêm từ `"news"` vào `query` thay vì chỉ giữ chủ đề cốt lõi `"AI"`. | Sửa `starter_v0/artifacts/tools.yaml` (mô tả tham số `query` và `topic` của `lookup`): khi `topic="news"`, `query` chỉ chứa tên chủ đề chính (ví dụ `"AI"`), không lặp lại chữ `"news"` hay `"tin tức"`. |
+| `R08_out_of_scope` | `out_of_scope` (`unexpected_tool_call`) | `send(text="Nguyên hàm của x^2 là ...")` | `expected no tool call` — Câu hỏi giải toán tích phân nằm ngoài phạm vi research agent, nhưng model tự giải rồi gọi `send` để gửi đi do prompt gốc ép *"Pick one tool and fill in its arguments"*. | Sửa `starter_v0/artifacts/system_prompt.md` và `tools.yaml`: bỏ chỉ dẫn ép gọi tool bằng mọi giá; quy định rõ nếu câu hỏi ngoài phạm vi research (toán học, lập trình, kiến thức phổ thông...) thì trả lời trực tiếp / từ chối lịch sự và **không gọi tool nào** (`no_tool`). |
+| `R10_missing_handle` | `missing_info` (`missing_tool_call`) | `timeline(screenname="sama")` | `missing tool call clarify; extra tool call timeline` — User yêu cầu *"Tóm tắt 5 tweet mới nhất giúp mình"* mà không nêu tài khoản nào; model tự đoán `"sama"` vì prompt gốc dạy *"do not ask them back — pick a well-known account like Sam Altman"*. | Sửa `starter_v0/artifacts/system_prompt.md` và `tools.yaml`: xóa chỉ dẫn đoán mò tài khoản; bắt buộc gọi `clarify` khi thiếu thông tin bắt buộc như tên tài khoản/handle. |
+| `R11_missing_url` | `missing_info` (`missing_tool_call`) | `fetch(url="https://example.com/article")` | `missing tool call clarify; extra tool call fetch` — User nói *"Tóm tắt bài viết này hộ mình"* nhưng không đưa URL; model tự bịa URL `https://example.com/article` do prompt gốc bảo *"assume a likely URL and read it"*. | Sửa `starter_v0/artifacts/system_prompt.md` và `tools.yaml`: xóa chỉ dẫn tự giả định URL; bắt buộc gọi `clarify` để hỏi URL khi user nói mơ hồ (*"bài viết này"*, *"link này"*) mà chưa cung cấp URL hợp lệ. |
+| `R12_confirm_before_send` | `wrong_boundary` (`missing_tool_call`) | `send(text="Bản tin này")` | `missing tool call clarify; extra tool call send` — User yêu cầu *"Đăng bản tin này lên Telegram giúp mình"* khi chưa có nội dung cụ thể và chưa xác nhận gửi; model gọi thẳng `send` vì prompt gốc dặn *"When the user wants to send, post, or publish something, just go ahead and do it"*. | Sửa `starter_v0/artifacts/system_prompt.md` và `tools.yaml`: thiết lập boundary xác nhận nghiêm ngặt cho `send` — không bao giờ gọi `send` ngay ở lượt đầu khi chưa xác nhận rõ nội dung/chưa có xác nhận của user; phải gọi `clarify` (`response_type="yes_no"`) để xin xác nhận trước. |
+| `R13_parallel_web_and_tweets` | `wrong_tool` (`wrong_arg_value`) | `lookup(query="AI news", timeframe="day", max_results=5)`, `social_search(query="AI", search_type="Latest", limit=5)` | `query: expected 'AI', got 'AI news'; topic: expected 'news', got None` — Model gọi song song đúng 2 tool (`lookup` và `social_search`), nhưng ở `lookup` quên truyền `topic="news"` và lại thêm chữ `"news"` vào `query`. | Sửa `starter_v0/artifacts/tools.yaml` (tool `lookup`) và `system_prompt.md`: quy định khi user tìm "tin / tin tức / news" trên web thì bắt buộc đặt `topic="news"` và giữ `query` ngắn gọn chỉ gồm từ khóa chủ đề (`"AI"`). |
+| `R14_out_of_scope_coding` | `out_of_scope` (`unexpected_tool_call`) | `send(text="Dưới đây là một hàm Python tính số Fibonacci...")` | `expected no tool call` — Yêu cầu viết code Python tính Fibonacci bằng đệ quy nằm ngoài phạm vi công cụ research, nhưng model lại gọi `send` để gửi đoạn code. | Sửa `starter_v0/artifacts/system_prompt.md` và `tools.yaml`: làm rõ `send` chỉ dùng để đăng/gửi bản tin lên Telegram sau khi user đã xác nhận, tuyệt đối không dùng `send` để trả lời câu hỏi thông thường hay câu hỏi ngoài phạm vi (viết code, giải toán). |
 
 ### B3. Team Eval Cases
 
