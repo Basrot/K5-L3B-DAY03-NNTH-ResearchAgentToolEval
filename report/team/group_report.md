@@ -137,6 +137,65 @@ Lấy từ `results[*].result.failures` trong run JSON (`starter_v0/runs/v0_B_ba
 | `G09_multiturn_lookup_timeframe` (Multi-turn) | Chuyển `topic="general"` sang `topic="news"` và cập nhật `timeframe="month"` cho chủ đề `semiconductor` qua nhiều lượt. | `lookup(query="semiconductor", topic="news", timeframe="month")` | **PASS** |
 | `G10_multiturn_confirmed_send` (Multi-turn) | Sau khi bot đã hỏi xác nhận và user đã xác nhận rõ ràng ở lượt 3, agent gọi tool `send` với `confirmed=true`. | `send(text="Nghiên cứu mới về Agentic AI vừa được công bố.", confirmed=true)` | **PASS** |
 | `G11_deduplicate_sources_urls` (Single-turn) | Danh sách URL nguồn phải được chuyển nguyên dạng vào `deduplicate_sources`; tool sẽ xử lý URL trùng và URL không hợp lệ. | `deduplicate_sources(urls=[...])` | **Chưa chạy** |
+#### Tổng hợp kết quả Group Eval
+
+**1. Đánh giá ban đầu — OpenRouter / GPT-4o-mini**
+
+Nhóm xây dựng bộ Group Eval ban đầu gồm 10 test case
+(5 single-turn và 5 multi-turn).
+
+Kết quả đánh giá Agent v3:
+- Total cases: 10
+- Measured cases: 10
+- Provider errors: 0
+- Passed cases: 10
+- Case Accuracy: 100%
+- Tool Routing Accuracy: 100%
+- Argument Accuracy: 100%
+- Multiturn Accuracy: 100%
+
+**Run JSON:**
+`starter_v0/runs/v3_B_group_openrouter_20261110T193715824551.json`
+
+**2. Đánh giá mở rộng — Gemini 3.5 Flash Lite**
+
+Sau khi bổ sung G11 (`deduplicate_sources`) và
+G12 (`text_stats`), bộ Group Eval gồm 12 test case
+(7 single-turn và 5 multi-turn).
+
+Nhóm thực hiện đánh giá bổ sung với Gemini
+`gemini-3.5-flash-lite` trên cấu hình Agent v3.
+
+Kết quả:
+- Total cases: 12
+- Measured cases: 12
+- Provider errors: 0
+- Passed cases: 9
+- Case Accuracy: 75%
+- Tool Routing Accuracy: 75%
+- Argument Accuracy: 75%
+- Multiturn Accuracy: 80%
+
+Các trường hợp chưa đạt:
+- G01: `wrong_tool`
+- G06: `wrong_arg_value`
+- G12: `wrong_tool`
+
+**Run JSON:**
+`starter_v0/runs/v3_B_group_gemini_20261110T224024928236.json`
+
+**3. Nhận xét**
+
+Kết quả OpenRouter đạt 10/10 trên bộ 10 case ban đầu,
+không đại diện cho toàn bộ 12 case sau khi mở rộng.
+
+Kết quả Gemini đạt 9/12 trên bộ mở rộng và không gặp
+lỗi provider. Điều này cho thấy cùng cấu hình Agent v3
+có thể cho kết quả Tool Calling khác nhau khi thay
+đổi mô hình nền tảng.
+
+Kết quả Gemini là thử nghiệm bổ sung, không thay thế
+bằng chứng đánh giá chính thức bằng OpenRouter.
 
 ### B4. Live Chat Evidence
 
