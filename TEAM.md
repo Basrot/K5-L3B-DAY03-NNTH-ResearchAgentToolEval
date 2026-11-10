@@ -11,7 +11,7 @@
 
 | STT | Họ tên             | MSSV        | Email                     | GitHub     | Vai trò                                                                      |
 | --: | ------------------ | ----------- | ------------------------- | ---------- | ---------------------------------------------------------------------------- |
-|   1 | Nguyễn Gia Nam     | 2A202603761 |                           | Basrot     | Trưởng nhóm / Kỹ thuật                                                       |
+|   1 | Nguyễn Gia Nam     | 2A202603761 | 26ai.namng@vinuni.edu.vn  | Basrot     | Trưởng nhóm / Kỹ thuật                                                       |
 |   2 | Thiều Thế Ngọc     | 2A202603788 | 26ai.ngoctt@vinuni.edu.vn | BFNGOC     | CP2: phân tích lỗi v1, tối ưu tool declaration cho R12                       |
 |   3 | Đào Ngọc Hân       | 2A202603779 | daongochan1505@gmail.com  | daongochan | Phụ trách Baseline v0, Failure Analysis (CP1), Tối ưu Prompt/Tools & Báo cáo |
 |   4 | Trần Trọng Đức Tài | 2A202603732 | 26ai.taittd@vinuni.edu.vn |            | Phụ trách Tool Developer & Testing (CP3), tối ưu v3                          |
