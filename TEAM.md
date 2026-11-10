@@ -12,7 +12,7 @@
 | STT | Họ tên | MSSV | Email | GitHub | Vai trò |
 | --: | ------ | ---- | ----- | ------ | ------- |
 |   1 | Nguyễn Gia Nam | 2A202603761 | | Basrot | Trưởng nhóm / Kỹ thuật |
-|   2 | Thiều Thế Ngọc | 2A202603788 | | | Thành viên |
+|   2 | Thiều Thế Ngọc | 2A202603788 | 26ai.ngoctt@vinuni.edu.vn | BFNGOC | CP2: phân tích lỗi v1, tối ưu tool declaration cho R12 |
 |   3 | Đào Ngọc Hân | 2A202603779 | daongochan1505@gmail.com | daongochan | Phụ trách Baseline v0, Failure Analysis (CP1), Tối ưu Prompt/Tools & Báo cáo |
 |   4 | | | | | |
 
@@ -48,3 +48,24 @@ Sao chép mục dưới đây cho từng thành viên.
 - Phân tích CSV: `starter_v0/analysis/base_runs.csv`
 - Báo cáo nhóm: Mục 1, Bảng B1, Bảng B2 trong `report/team/group_report.md`
 - Báo cáo cá nhân: `report/team/2A202603779_DaoNgocHan.md`
+
+## ThieuTheNgoc-2A202603788
+
+### Phần việc phụ trách
+
+- CP2 — phân tích lỗi còn lại của v1 và tối ưu khai báo tool cho v2, tập trung vào boundary xác nhận trước khi gửi (R12).
+- Phối hợp kiểm tra kết quả eval sau khi nhóm chạy v2 bằng cấu hình API đầy đủ.
+
+### Đóng góp cụ thể
+
+- Phân tích case `R12_confirm_before_send` trong run v1: agent gọi `send` với `confirmed=false` thay vì hỏi xác nhận trước.
+- Cập nhật `starter_v0/artifacts/tools.yaml` để yêu cầu `clarify` với `response_type="yes_no"` trước khi gửi; chỉ gọi `send` khi người dùng xác nhận rõ ràng ở lượt sau và đặt `confirmed=true`.
+- Giữ thay đổi v2 tập trung vào R12; không thay đổi system prompt hoặc quy tắc chuyển nguồn ở M06.
+- Kết quả v2 cần được xác minh bằng run mới với API keys đầy đủ; chưa ghi nhận metric v2 tại thời điểm báo cáo.
+
+### Bằng chứng
+
+- Run v1: `starter_v0/runs/v1_B_base_openrouter_20261110T180455272193.json` (case `R12_confirm_before_send`).
+- Khai báo tool: `starter_v0/artifacts/tools.yaml`.
+- Commit thay đổi R12: `55fb0c7` (`fix: update R12 tool.yaml`).
+- Báo cáo cá nhân: `report/team/2A202603788_ThieuTheNgoc.md`.

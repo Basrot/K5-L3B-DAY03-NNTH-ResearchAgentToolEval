@@ -16,12 +16,12 @@
 tools:
   # ---------------- Core tools ----------------
   - name: clarify
-    description: "Hỏi lại người dùng khi yêu cầu thiếu thông tin bắt buộc (như thiếu tên tài khoản/handle khi lấy tweet cá nhân, hoặc thiếu đường dẫn URL khi yêu cầu đọc/tóm tắt bài viết). Trước hành động có tác dụng bên ngoài như gửi/đăng lên Telegram, dùng clarify với response_type='yes_no' để xin xác nhận rõ ràng; yêu cầu gửi ban đầu không được xem là xác nhận. Không dùng khi đã đủ thông tin hoặc khi câu hỏi nằm ngoài phạm vi research."
+    description: "Hỏi lại người dùng khi yêu cầu thiếu thông tin bắt buộc (như thiếu tên tài khoản/handle khi lấy tweet cá nhân, hoặc thiếu đường dẫn URL khi yêu cầu đọc/tóm tắt bài viết). Với yêu cầu gửi/đăng lên Telegram, bước đầu tiên luôn là gọi clarify với response_type='yes_no' để hỏi người dùng có xác nhận gửi bản tin được nhắc đến hay không; không hỏi xin nội dung bằng response_type='text' trước bước xác nhận, kể cả khi nội dung chưa được nêu rõ. Sau khi xác nhận, nếu còn thiếu nội dung thì hỏi bổ sung bằng text; chỉ gửi nội dung đã được xác nhận. Yêu cầu gửi ban đầu không phải là xác nhận. Không dùng khi đã đủ thông tin hoặc khi câu hỏi nằm ngoài phạm vi research."
     parameters:
       type: object
       properties:
-        question: {type: string, default: "", description: "Câu hỏi ngắn gọn, rõ ràng gửi cho người dùng để xin thông tin còn thiếu."}
-        response_type: {type: string, enum: [text, yes_no, choice], default: "text", description: "Kiểu câu trả lời mong đợi: 'text' khi hỏi thông tin mở còn thiếu (như tài khoản hoặc URL), 'yes_no' để xin xác nhận trước hành động gửi/đăng hoặc hỏi có/không, 'choice' khi đưa danh sách lựa chọn."}
+        question: {type: string, default: "", description: "Câu hỏi ngắn gọn, rõ ràng. Với yêu cầu gửi/đăng Telegram, hỏi xác nhận có/không, ví dụ 'Bạn xác nhận muốn gửi bản tin này lên Telegram chứ?'."}
+        response_type: {type: string, enum: [text, yes_no, choice], default: "text", description: "Với mọi yêu cầu gửi/đăng Telegram, bắt buộc dùng 'yes_no' ở bước đầu để xác nhận, kể cả khi nội dung chưa rõ; không dùng 'text' trước bước xác nhận. Sau xác nhận, dùng 'text' nếu còn thiếu nội dung. Với thông tin mở khác (tài khoản, URL), dùng 'text'; dùng 'choice' cho danh sách lựa chọn."}
         options: {type: array, default: [], items: {type: string}, description: "Danh sách lựa chọn khi response_type='choice'."}
       required: [question]
 
@@ -86,12 +86,12 @@ tools:
 
   # ---------------- Bonus tools ----------------
   - name: send
-    description: "Gửi bản tin văn bản lên kênh Telegram. Không gọi tool này chỉ dựa trên yêu cầu gửi/đăng ban đầu. Trước tiên phải xin xác nhận rõ ràng bằng clarify(response_type='yes_no'); chỉ gọi send sau khi người dùng xác nhận ở lượt sau, với confirmed=true. Không bao giờ dùng tool này để trả lời câu hỏi thông thường, giải toán hay viết code của người dùng."
+    description: "Gửi bản tin văn bản lên kênh Telegram. Không gọi tool này chỉ dựa trên yêu cầu gửi/đăng ban đầu. Trước tiên phải xin xác nhận rõ ràng bằng clarify(response_type='yes_no'), kể cả khi nội dung cần gửi chưa rõ; không thay bước xác nhận bằng câu hỏi text. Chỉ gọi send sau khi người dùng xác nhận ở lượt sau, với nội dung gửi đã rõ và confirmed=true. Không bao giờ dùng tool này để trả lời câu hỏi thông thường, giải toán hay viết code của người dùng."
     parameters:
       type: object
       properties:
         text: {type: string, default: "", description: "Nội dung văn bản cần gửi lên Telegram."}
-        confirmed: {type: boolean, default: false, description: "Chỉ đặt true sau khi người dùng xác nhận rõ ràng nội dung cần gửi ở lượt sau. Yêu cầu gửi ban đầu không phải là xác nhận."}
+        confirmed: {type: boolean, default: false, description: "Chỉ đặt true nếu người dùng đã xác nhận rõ ràng ở lượt sau và giá trị text là nội dung đã xác nhận. Yêu cầu gửi ban đầu không phải là xác nhận."}
       required: [text]
 
   - name: policy
