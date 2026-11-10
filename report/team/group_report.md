@@ -16,19 +16,31 @@
 
 ### A1. Agent này làm được gì
 
-> 1–2 câu mô tả agent dùng để làm gì (cho team khác hiểu nhanh).
+Research Agent là hệ thống trợ lý AI có khả năng hỗ trợ nghiên cứu, tìm kiếm thông tin trên Internet, đọc nội dung website, tìm kiếm tài liệu khoa học trên arXiv và phân tích thông tin mạng xã hội X/Twitter.
 
-Ví dụ: "Research agent: tìm tin theo từ khóa / theo tài khoản, đọc URL, tổng hợp thành digest, và gửi lên Telegram khi được xác nhận."
+Hệ thống sử dụng cơ chế Tool Calling để AI tự lựa chọn và thực thi công cụ phù hợp với yêu cầu của người dùng. Khi thiếu thông tin quan trọng, Agent có thể yêu cầu người dùng bổ sung thay vì tự suy đoán.
+
+Nhóm phát triển giao diện bằng Streamlit, cho phép:
+- Trò chuyện trực tiếp với Research Agent.
+- Lựa chọn Provider và Model AI.
+- Theo dõi công cụ được gọi và tham số truyền vào.
+- Xem kết quả thực thi của từng công cụ.
+- Hội thoại nhiều lượt và duy trì ngữ cảnh.
+- Lưu và tải transcript JSON phục vụ kiểm thử.
 
 **Cách chạy UI:**
 
-> Lệnh chạy UI (ví dụ `streamlit run app.py`) và dependency đã thêm vào `starter_v0/requirements.txt`.
+```powershell
+cd starter_v0
+python -m pip install -r requirements.txt
+python -m streamlit run app.py
+```
 
 **Link dùng thử (deploy):**
 
-> Dán link public để team khác mở thử ngay. Cách deploy nhanh bằng Cloudflare Tunnel xem README. Nếu deploy Vercel/Streamlit Cloud thì dán link đó.
->
-> URL:
+- Nền tảng: Streamlit Community Cloud
+- URL: [(https://vinuni-research-agent-nhth.streamlit.app/)]
+- Source code: `starter_v0/app.py`
 
 ### A2. Tool agent có
 
@@ -44,9 +56,9 @@ Ví dụ: "Research agent: tìm tin theo từ khóa / theo tài khoản, đọc 
 
 > 3–5 câu hỏi/yêu cầu mẫu để team khác tự thử agent ngay.
 
-1.
-2.
-3.
+1. **Cơ bản:** Tìm 3 ứng dụng thực tế của AI trong lĩnh vực y tế và cung cấp nguồn tham khảo.
+2. **Thiếu bối cảnh:** Hãy lấy 5 bài đăng gần đây nhất của tài khoản đó trên X.
+3. **Đa bước:** Tìm 3 nghiên cứu gần đây trên arXiv về AI Agent, đọc nội dung hoặc phần tóm tắt của từng nghiên cứu và tổng hợp thành một bản tin ngắn kèm nguồn.
 
 ## 3. Giải pháp
 
@@ -101,12 +113,21 @@ Lấy từ `results[*].result.failures` trong run JSON (`starter_v0/runs/v0_B_ba
 
 ### B4. Live Chat Evidence
 
-Lấy từ `starter_v0/transcripts/*.transcript.json`.
+Giao diện Streamlit đã được kiểm thử với mô hình Gemini `gemini-3.5-flash-lite`.
+
+Các tình huống kiểm thử gồm: yêu cầu cơ bản, duy trì ngữ cảnh hội thoại, tìm kiếm thông tin mạng xã hội và xử lý yêu cầu thiếu thông tin.
 
 | Turn | User Request | Tool Calls | Version Evidence | Outcome |
 |---|---|---|---|---|
-|  |  |  |  |  |
-
+| 1 | Xin chào! Bạn có thể giúp tôi làm những công việc gì? | Không cần tool | Transcript kiểm thử Gemini | PASS — Agent giới thiệu đúng chức năng |
+| 2 | Tìm 5 thông tin về ứng dụng AI trong chẩn đoán y tế, kèm nguồn tham khảo. | `lookup`, `format` (cần đối chiếu transcript) | Transcript kiểm thử Gemini | PASS sơ bộ — Trả lời có nội dung và nguồn |
+| 3 | Tóm tắt 3 ý quan trọng nhất từ các thông tin vừa tìm được. | Kiểm tra transcript | Transcript kiểm thử Gemini | PASS — Sử dụng ngữ cảnh câu trước |
+| 4 | Hãy lấy 5 bài đăng gần đây của tài khoản @OpenAI trên X. | Cần xác minh tool thực tế | Transcript kiểm thử Gemini | Cần kiểm tra dữ liệu trả về từ API |
+| 5 | Hãy tìm thông tin về một tài khoản X nhưng tôi chưa cung cấp tên tài khoản. | `clarify` nếu log xác nhận | Transcript kiểm thử Gemini | PASS hành vi — Agent hỏi lại tên tài khoản |
+**Bằng chứng:**
+- Source code: `starter_v0/app.py`
+- Transcript: `starter_v0/transcripts/*.transcript.json`
+- Website: [(https://vinuni-research-agent-nhth.streamlit.app/)]
 ### B5a. Required Evidence — Tool mới, unit test, UI
 
 | Item | Evidence File | What Worked | Risk / Guardrail |
@@ -161,7 +182,36 @@ Lỗi đặc thù của model nhỏ (đếm từ run JSON):
 ## 5. Khó khăn và cách xử lý
 
 > Khó khăn chính và cách nhóm xử lý. Nếu gặp lỗi kỹ thuật (provider lỗi, hết quota API, tool không chạy), mô tả lỗi và dẫn bằng chứng: run JSON, log, ảnh chụp.
+### 5.1. Cấu hình môi trường Python
 
+**Khó khăn:** Quá trình cài đặt thư viện ban đầu gặp vấn đề tương thích với phiên bản Python.
+
+**Cách xử lý:** Sử dụng Python 3.11 và môi trường ảo `.venv`, sau đó cài đặt các dependency trong `requirements.txt`.
+### 5.2. Kết nối AI Provider
+
+**Khó khăn:**
+- OpenRouter từng trả về HTTP 402 do giới hạn credit.
+- Một số model Gemini gặp lỗi không khả dụng hoặc HTTP 503 khi dịch vụ quá tải.
+
+**Cách xử lý:** Kiểm tra kết nối bằng script preflight và lựa chọn model Gemini `gemini-3.5-flash-lite` đã chạy thành công trong quá trình thử nghiệm.
+
+### 5.3. Triển khai Streamlit Community Cloud
+
+**Khó khăn:** Website sau khi deploy gặp lỗi `Missing API key env var: GEMINI_API_KEY` vì môi trường cloud không sử dụng trực tiếp file `.env` trên máy cá nhân.
+
+**Cách xử lý:** Cấu hình API key trong Streamlit Cloud Secrets, sau đó kiểm thử lại giao diện và khả năng kết nối Gemini.
+
+### 5.4. Đánh giá hành vi Tool Calling
+
+**Khó khăn:** Trong quá trình kiểm thử, Agent có trường hợp tự suy đoán tài khoản X khi người dùng chưa cung cấp đầy đủ thông tin. Ngoài ra, một số công cụ phụ thuộc API bên ngoài nên có thể gặp lỗi khi thiếu key.
+
+**Cách xử lý:** Lưu transcript JSON để phân tích các lượt thực thi công cụ, kiểm tra arguments và so sánh kết quả trả về. Nhóm tiếp tục cải tiến System Prompt và Tool Declaration nhằm xử lý tốt hơn các yêu cầu thiếu thông tin.
+
+### 5.5. Quản lý mã nguồn và làm việc nhóm
+
+**Khó khăn:** Các thành viên làm việc song song trên GitHub nên có thể phát sinh thay đổi mới trên nhánh `main` trong quá trình tích hợp.
+
+**Cách xử lý:** Sử dụng Git branch để phát triển từng phần, đồng bộ các commit của nhóm trước khi merge và push lên `main`, hạn chế ghi đè mã nguồn của thành viên khác.
 -
 
 ## 6. Tổng hợp đóng góp
