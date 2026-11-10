@@ -5,7 +5,7 @@
 - Tên nhóm: NNTH
 - Lớp: L3B
 - Repo nhóm: `K5-L3B-DAY03-NNTH-ResearchAgentToolEval` (xem [SUBMISSION.md](SUBMISSION.md))
-- URL repo, nhánh nộp, commit chốt: `https://github.com/Basrot/K5-L3B-DAY03-NNTH-ResearchAgentToolEval` (nhánh: `main`)
+- URL repo và nhánh nộp: [GitHub nhóm NNTH](https://github.com/Basrot/K5-L3B-DAY03-NNTH-ResearchAgentToolEval) (`main`). Commit chốt: xem commit mới nhất tại thời điểm nộp.
 
 ## Thành viên
 
@@ -18,15 +18,13 @@
 
 ## Cá nhân
 
-Mỗi thành viên đồng thời tạo một báo cáo riêng trong `report/` theo dạng:
+Mỗi thành viên có một báo cáo cá nhân trong `report/team/` theo dạng:
 
 ```text
 report/team/MSSV_HoTen.md
 ```
 
-Ví dụ: `report/team/20241234_NguyenVanAn.md`.
-
-Sao chép mục dưới đây cho từng thành viên.
+Các báo cáo cá nhân của bốn thành viên được liệt kê trong mục bằng chứng tương ứng.
 ## NguyenGiaNam-2A202603761
 
 ### Phần việc phụ trách
@@ -34,7 +32,7 @@ Sao chép mục dưới đây cho từng thành viên.
 - Trưởng nhóm, hỗ trợ quản lý repository GitHub và tích hợp sản phẩm chung.
 - Phát triển giao diện Research Agent bằng Streamlit (CP4 — UI và Live Chat).
 - Tích hợp giao diện với backend Tool Calling của nhóm thông qua `chat.py`.
-- Kiểm thử hội thoại nhiều lượt, lưu transcript JSON làm bằng chứng.
+- Kiểm thử hội thoại nhiều lượt, lưu transcript JSON làm bằng chứng (phân biệt transcript v0 và v3).
 - Triển khai website trên Streamlit Community Cloud để phục vụ demo công khai.
 - Phối hợp hoàn thiện `TEAM.md`, `group_report.md` và báo cáo cá nhân.
 
@@ -45,9 +43,9 @@ Sao chép mục dưới đây cho từng thành viên.
 - Xây dựng chức năng hiển thị lịch sử hội thoại, tên công cụ được gọi, arguments và kết quả thực thi công cụ.
 - Bổ sung cấu hình Provider, Model, số lượt hội thoại giữ ngữ cảnh và số vòng gọi công cụ tối đa.
 - Triển khai chức năng lưu và tải transcript JSON, phục vụ kiểm tra các lượt chat và đánh giá hành vi Agent.
-- Kiểm thử kết nối với OpenRouter và Gemini; sử dụng `gemini-3.5-flash-lite` trong các phiên kiểm thử giao diện.
+- Kiểm thử kết nối với OpenRouter và Gemini; sử dụng `gemini-3.5-flash-lite` trong các phiên kiểm thử giao diện. Kết quả Group Eval mở rộng bằng Gemini: 9/12 PASS, không có lỗi provider.
 - Thực hiện kiểm thử các tình huống cơ bản, yêu cầu thiếu thông tin và hội thoại nhiều lượt. Ghi nhận các lỗi như HTTP 402, HTTP 503 và thiếu API key.
-- Triển khai ứng dụng trên Streamlit Community Cloud, cấu hình API key thông qua Secrets và kiểm thử hội thoại trên website công khai.
+- Triển khai ứng dụng trên Streamlit Community Cloud và cấu hình API key qua Secrets; website demo công khai được dẫn ở phần bằng chứng.
 - Không cung cấp tool `send` trong giao diện web nhằm tránh gửi Telegram ngoài ý muốn.
 - Phối hợp cập nhật tài liệu nhóm và tích hợp mã nguồn UI vào nhánh `main`.
 
@@ -56,8 +54,8 @@ Sao chép mục dưới đây cho từng thành viên.
 - Source code UI: `starter_v0/app.py`.
 - Dependencies: `starter_v0/requirements.txt`.
 - Backend tích hợp: `starter_v0/chat.py`.
-- Transcript kiểm thử: `starter_v0/transcripts/v0_gemini_20261110T181508022586.transcript.json`.
-- Live Chat trên Streamlit Cloud: [Bằng chứng hội thoại và Tool Calling](starter_v0/transcripts/) (`starter_v0/transcripts/v3_gemini_20261110T221335666627.transcript.json`, `starter_v0/transcripts/v3_openrouter_20261110T224752771866.transcript.json`).
+- Transcript kiểm thử v0: [Gemini v0](starter_v0/transcripts/v0_gemini_20261110T181508022586.transcript.json).
+- Transcript phiên bản v3: [Gemini v3](starter_v0/transcripts/v3_gemini_20261110T221335666627.transcript.json), [OpenRouter v3](starter_v0/transcripts/v3_openrouter_20261110T224752771866.transcript.json). Các file là bằng chứng hội thoại và Tool Calling; môi trường chạy (local/Cloud) cần đối chiếu metadata hoặc log triển khai trước khi khẳng định.
 - Website demo công khai: [https://vinuni-research-agent-nhth.streamlit.app/](https://vinuni-research-agent-nhth.streamlit.app/).
 - Merge commit tích hợp UI: `1566ce9`.
 - Báo cáo cá nhân: `report/team/2A202603761_NguyenGiaNam.md`.
@@ -120,7 +118,7 @@ Sao chép mục dưới đây cho từng thành viên.
 - Run v3: `starter_v0/runs/v3_B_base_openrouter_20261110T191036287347.json` (20/20; R12 đúng `response_type="yes_no"`).
 - Version log: `starter_v0/artifacts/version_log.csv`.
 - Commit: `55fb0c7` (thay đổi cho v2), `de2d24d` (thay đổi cho v3), `44059ba` (5 case single-turn), `870ead4` (tool `deduplicate_sources`).
-- Kiểm tra contract: `pytest tests/test_tool_contract.py -q` — 60 passed.
+- Kiểm tra contract: `pytest tests/test_tool_contract.py -q` — 60 passed tại lần chạy được ghi nhận (các test bổ sung sau đó có thể làm thay đổi tổng số).
 - Báo cáo cá nhân: `report/team/2A202603788_ThieuTheNgoc.md`.
 
 ## TranTrongDucTai-2A202603732
@@ -135,7 +133,7 @@ Sao chép mục dưới đây cho từng thành viên.
 
 - Tạo tool `starter_v0/tools/extract_keywords/` và `starter_v0/tools/text_stats/` gồm `tool.py` và `TOOL.md` chuẩn contract.
 - Đăng ký các tool trong `starter_v0/tools/__init__.py` và `starter_v0/artifacts/tools.yaml`.
-- Viết các bộ unit tests hoàn chỉnh trong `starter_v0/tests/test_tools_todo.py` và `starter_v0/tests/test_text_stats.py` bao phủ happy path, bad input và error branch; giữ test suite 86 test passed, 0 failed.
+- Viết các bộ unit tests trong `starter_v0/tests/test_tools_todo.py` và `starter_v0/tests/test_text_stats.py` bao phủ happy path, bad input và error branch; bộ test được mở rộng thêm về sau (xem kết quả 104 passed, 0 skipped ở phần Đào Ngọc Hân).
 - Xây dựng 5 case multi-turn (`G06` đến `G10`) cùng case `G12` trong `starter_v0/data/eval_group.json`.
 
 ### Bằng chứng
