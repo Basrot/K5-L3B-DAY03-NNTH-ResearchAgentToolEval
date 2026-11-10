@@ -49,4 +49,4 @@
 ## 5. Tự đánh giá
 
 - Các thay đổi v2 và v3 được tách thành hai giả thuyết liên tiếp về cùng lỗi R12; run v2 cho thấy lỗi chưa hết, còn run v3 xác nhận case R12 và toàn bộ base eval đạt.
-- Đã hoàn thành 5 case single-turn theo phân công; cần phối hợp hoàn thành 5 case multi-turn và chạy group eval trước khi xem CP4 hoàn tất.
+- Đã hoàn thành 5 case single-turn và case `G11_deduplicate_sources_urls` theo phân công; đã phối hợp hoàn thành 12 case trong `eval_group.json` và chạy group eval đạt 12/12 PASS (`starter_v0/runs/v3_B_group_openrouter_20261110T224703124394.json`).

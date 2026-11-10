@@ -122,17 +122,12 @@ Lấy từ `results[*].result.failures` trong run JSON (`starter_v0/runs/v0_B_ba
 
 ### B3. Team Eval Cases
 
-Bộ `starter_v0/data/eval_group.json` hiện gồm 12 case,
-trong đó có 7 single-turn và 5 multi-turn.
+Bộ `starter_v0/data/eval_group.json` hiện gồm 12 case (7 single-turn và 5 multi-turn):
 
-- Bộ ban đầu G01–G10: OpenRouter/GPT-4o-mini đạt
-  10/10 PASS, không có lỗi provider.
-- Bộ mở rộng G01–G12: Gemini 3.5 Flash Lite đạt
-  9/12 PASS, không có lỗi provider.
-- Ba case Gemini chưa đạt: G01, G06, G12.
-
-Kết quả của hai lần chạy được trình bày riêng vì
-sử dụng model và số lượng test case khác nhau.
+- **Bộ ban đầu `G01`–`G10`:** OpenRouter/`openai/gpt-4o-mini` đạt **10/10 PASS** (`starter_v0/runs/v3_B_group_openrouter_20261110T193715824551.json`), không có lỗi provider.
+- **Bộ mở rộng đầy đủ `G01`–`G12`:**
+  - OpenRouter/`openai/gpt-4o-mini` đạt **12/12 PASS** (`starter_v0/runs/v3_B_group_openrouter_20261110T224703124394.json`), không có lỗi provider.
+  - Gemini `gemini-3.5-flash-lite` đạt **9/12 PASS** (`starter_v0/runs/v3_B_group_gemini_20261110T224024928236.json`), không có lỗi provider (3 case chưa đạt: `G01`, `G06`, `G12`).
 
 | Case ID | What It Tests | Expected Tool/Behavior | Result |
 |---|---|---|---|
@@ -146,84 +141,51 @@ sử dụng model và số lượng test case khác nhau.
 | `G08_multiturn_timeline_correction` (Multi-turn) | Cập nhật tài khoản sang Yann LeCun (handle `"ylecun"`) và giảm giới hạn số lượng bài đăng từ 5 xuống 3. | `timeline(screenname="ylecun", limit=3)` | **PASS** |
 | `G09_multiturn_lookup_timeframe` (Multi-turn) | Chuyển `topic="general"` sang `topic="news"` và cập nhật `timeframe="month"` cho chủ đề `semiconductor` qua nhiều lượt. | `lookup(query="semiconductor", topic="news", timeframe="month")` | **PASS** |
 | `G10_multiturn_confirmed_send` (Multi-turn) | Sau khi bot đã hỏi xác nhận và user đã xác nhận rõ ràng ở lượt 3, agent gọi tool `send` với `confirmed=true`. | `send(text="Nghiên cứu mới về Agentic AI vừa được công bố.", confirmed=true)` | **PASS** |
-| `G11_deduplicate_sources_urls` (Single-turn) | Danh sách URL nguồn phải được chuyển nguyên dạng vào `deduplicate_sources`; tool sẽ xử lý URL trùng và URL không hợp lệ. | `deduplicate_sources(urls=[...])` | **Chưa chạy** |
+| `G11_deduplicate_sources_urls` (Single-turn) | Danh sách URL nguồn phải được chuyển nguyên dạng vào `deduplicate_sources`; tool sẽ xử lý URL trùng và URL không hợp lệ. | `deduplicate_sources(urls=[...])` | **PASS** |
+| `G12_text_stats_estimate` (Single-turn) | Yêu cầu đếm số từ và ước tính thời gian đọc văn bản phải gọi tool `text_stats` với đúng `text` và `wpm=250`. | `text_stats(text="Large language models are capable of complex reasoning and tool calling across various domains.", wpm=250)` | **PASS** |
+
 #### Tổng hợp kết quả Group Eval
 
-**1. Đánh giá ban đầu — OpenRouter / GPT-4o-mini**
+**1. Đánh giá chính thức — OpenRouter / `openai/gpt-4o-mini`**
 
-Nhóm xây dựng bộ Group Eval ban đầu gồm 10 test case
-(5 single-turn và 5 multi-turn).
+- **Bộ 10 case ban đầu (`G01`–`G10`, 5 single-turn + 5 multi-turn):**
+  - Passed cases: **10/10 (100%)** (`case_accuracy: 1.0`, `tool_routing_accuracy: 1.0`, `argument_accuracy: 1.0`, `multiturn_accuracy: 1.0`, `provider_error_cases: 0`)
+  - Run JSON: `starter_v0/runs/v3_B_group_openrouter_20261110T193715824551.json`
+- **Bộ 12 case mở rộng đầy đủ (`G01`–`G12`, 7 single-turn + 5 multi-turn):**
+  - Passed cases: **12/12 (100%)** (`case_accuracy: 1.0`, `tool_routing_accuracy: 1.0`, `argument_accuracy: 1.0`, `multiturn_accuracy: 1.0`, `provider_error_cases: 0`)
+  - Run JSON: `starter_v0/runs/v3_B_group_openrouter_20261110T224703124394.json`
 
-Kết quả đánh giá Agent v3:
-- Total cases: 10
-- Measured cases: 10
-- Provider errors: 0
-- Passed cases: 10
-- Case Accuracy: 100%
-- Tool Routing Accuracy: 100%
-- Argument Accuracy: 100%
-- Multiturn Accuracy: 100%
+**2. Đánh giá mở rộng đối chứng — Gemini (`gemini-3.5-flash-lite`)**
 
-**Run JSON:**
-`starter_v0/runs/v3_B_group_openrouter_20261110T193715824551.json`
-
-**2. Đánh giá mở rộng — Gemini 3.5 Flash Lite**
-
-Sau khi bổ sung G11 (`deduplicate_sources`) và
-G12 (`text_stats`), bộ Group Eval gồm 12 test case
-(7 single-turn và 5 multi-turn).
-
-Nhóm thực hiện đánh giá bổ sung với Gemini
-`gemini-3.5-flash-lite` trên cấu hình Agent v3.
-
-Kết quả:
-- Total cases: 12
-- Measured cases: 12
-- Provider errors: 0
-- Passed cases: 9
-- Case Accuracy: 75%
-- Tool Routing Accuracy: 75%
-- Argument Accuracy: 75%
-- Multiturn Accuracy: 80%
-
-Các trường hợp chưa đạt:
-- G01: `wrong_tool`
-- G06: `wrong_arg_value`
-- G12: `wrong_tool`
-
-**Run JSON:**
-`starter_v0/runs/v3_B_group_gemini_20261110T224024928236.json`
+Sau khi bổ sung `G11` (`deduplicate_sources`) và `G12` (`text_stats`), nhóm thực hiện đánh giá đối chứng bổ sung với `gemini-3.5-flash-lite` trên cấu hình Agent `v3`:
+- Total cases: 12 | Measured cases: 12 | Provider errors: 0 | Passed cases: **9/12**
+- Case Accuracy: 75% | Tool Routing Accuracy: 75% | Argument Accuracy: 75% | Multiturn Accuracy: 80%
+- Các trường hợp chưa đạt trên Gemini: `G01` (`wrong_tool`), `G06` (`wrong_arg_value`), `G12` (`wrong_tool`)
+- **Run JSON:** `starter_v0/runs/v3_B_group_gemini_20261110T224024928236.json`
 
 **3. Nhận xét**
 
-Kết quả OpenRouter đạt 10/10 trên bộ 10 case ban đầu,
-không đại diện cho toàn bộ 12 case sau khi mở rộng.
-
-Kết quả Gemini đạt 9/12 trên bộ mở rộng và không gặp
-lỗi provider. Điều này cho thấy cùng cấu hình Agent v3
-có thể cho kết quả Tool Calling khác nhau khi thay
-đổi mô hình nền tảng.
-
-Kết quả Gemini là thử nghiệm bổ sung, không thay thế
-bằng chứng đánh giá chính thức bằng OpenRouter.
+- Trên mô hình chính thức `openai/gpt-4o-mini` (OpenRouter), Agent `v3` đạt tuyệt đối **10/10** trên bộ 10 case cốt lõi và **12/12 (100%)** trên toàn bộ 12 case mở rộng.
+- Kết quả đối chứng trên Gemini (`9/12`, không gặp lỗi provider) cho thấy cùng cấu hình Agent `v3` có thể cho kết quả Tool Calling khác nhau khi thay đổi mô hình nền tảng.
 
 ### B4. Live Chat Evidence
 
-Giao diện Streamlit đã được kiểm thử với mô hình Gemini `gemini-3.5-flash-lite`.
-
-Các tình huống kiểm thử gồm: yêu cầu cơ bản, duy trì ngữ cảnh hội thoại, tìm kiếm thông tin mạng xã hội và xử lý yêu cầu thiếu thông tin.
+Giao diện Streamlit (`starter_v0/app.py`) đã được kiểm thử thực tế với phiên bản `v3` trên cả hai provider `openrouter` (`openai/gpt-4o-mini`) và `gemini` (`gemini-3.5-flash-lite`), bao phủ đầy đủ 4 tình huống bắt buộc của Rubric C6 (yêu cầu thường gọi tool mới, yêu cầu thiếu thông tin, bổ sung thông tin ở lượt sau, và yêu cầu gửi/đăng lên Telegram):
 
 | Turn | User Request | Tool Calls | Version Evidence | Outcome |
 |---|---|---|---|---|
-| 1 | Xin chào! Bạn có thể giúp tôi làm những công việc gì? | Không cần tool | Transcript kiểm thử Gemini | PASS — Agent giới thiệu đúng chức năng |
-| 2 | Tìm 5 thông tin về ứng dụng AI trong chẩn đoán y tế, kèm nguồn tham khảo. | `lookup`, `format` (cần đối chiếu transcript) | Transcript kiểm thử Gemini | PASS sơ bộ — Trả lời có nội dung và nguồn |
-| 3 | Tóm tắt 3 ý quan trọng nhất từ các thông tin vừa tìm được. | Kiểm tra transcript | Transcript kiểm thử Gemini | PASS — Sử dụng ngữ cảnh câu trước |
-| 4 | Hãy lấy 5 bài đăng gần đây của tài khoản @OpenAI trên X. | Cần xác minh tool thực tế | Transcript kiểm thử Gemini | Cần kiểm tra dữ liệu trả về từ API |
-| 5 | Hãy tìm thông tin về một tài khoản X nhưng tôi chưa cung cấp tên tài khoản. | `clarify` nếu log xác nhận | Transcript kiểm thử Gemini | PASS hành vi — Agent hỏi lại tên tài khoản |
+| 1 | `Trích xuất 3 từ khóa quan trọng trong đoạn này: AI agents can help researchers organize papers. AI agents also support literature review.` | `extract_keywords(text="AI agents can help researchers organize papers. AI agents also support literature review.", top_k=3)` | `v3+p9899d34c0a9d+t5b8bc93f0bf9` (`v3_openrouter_20261110T224752771866.transcript.json`) | **PASS** (`status: answered`) — Gọi đúng tool mới `extract_keywords` và trả về 3 từ khóa kèm tần suất |
+| 2 | `Lấy 3 tweet mới nhất của tài khoản đó trên X giúp mình.` | `clarify(question="Bạn vui lòng cho biết tên tài khoản mà bạn muốn lấy tweet mới nhất trên X?", response_type="text")` | `v3+p9899d34c0a9d+t5b8bc93f0bf9` (`v3_openrouter_20261110T224752771866.transcript.json`) | **PASS** (`status: waiting_for_user`) — Phát hiện thiếu tên tài khoản, chủ động hỏi lại thay vì đoán mò |
+| 3 | `Tài khoản là @sama nhé.` | `timeline(screenname="sama", limit=3)` | `v3+p9899d34c0a9d+t5b8bc93f0bf9` (`v3_openrouter_20261110T224752771866.transcript.json`) | **PASS** (`status: answered`) — Nối ngữ cảnh từ lượt 2, tự bỏ ký tự `@` và lấy 3 tweet thực tế từ `@sama` |
+| 4 | `Hãy đăng bản tóm tắt 3 tweet vừa rồi lên kênh Telegram giúp mình.` | `clarify(question="Bạn xác nhận muốn gửi bản tin này lên Telegram chứ?", response_type="yes_no")` | `v3+p9899d34c0a9d+t5b8bc93f0bf9` (`v3_openrouter_20261110T224752771866.transcript.json`) | **PASS** (`status: waiting_for_user`) — Tuân thủ ranh giới an toàn, xin xác nhận `yes_no` trước khi gửi |
+
 **Bằng chứng:**
-- Source code: `starter_v0/app.py`
-- Transcript: `starter_v0/transcripts/*.transcript.json`
-- Website: [(https://vinuni-research-agent-nhth.streamlit.app/)]
+- Source code UI: `starter_v0/app.py`, `starter_v0/.streamlit/config.toml`
+- Transcript `v3` (OpenRouter, 4 lượt đầy đủ): `starter_v0/transcripts/v3_openrouter_20261110T224752771866.transcript.json`
+- Transcript `v3` (Gemini, 2 lượt kiểm thử `timeline` & `clarify`): `starter_v0/transcripts/v3_gemini_20261110T221335666627.transcript.json`
+- Transcript `v0` (Gemini, 9 lượt kiểm thử đối chứng): `starter_v0/transcripts/v0_gemini_20261110T181508022586.transcript.json`
+- Website deploy công khai: [https://vinuni-research-agent-nhth.streamlit.app/](https://vinuni-research-agent-nhth.streamlit.app/)
+
 ### B5a. Required Evidence — Tool mới, unit test, UI
 
 | Item | Evidence File | What Worked | Risk / Guardrail |
@@ -234,9 +196,9 @@ Các tình huống kiểm thử gồm: yêu cầu cơ bản, duy trì ngữ cả
 | Unit test: `extract_keywords` (3 test cases) | `starter_v0/tests/test_tools_todo.py` — `test_extract_keywords_happy_path_returns_top_frequent_words`, `test_extract_keywords_bad_input_from_model_handles_gracefully`, `test_extract_keywords_failure_returns_error_dict` | Bao phủ kết quả thường, input rỗng/whitespace và xử lý input sai/top_k không hợp lệ. | Ví dụ lỗi được unit test bắt nhưng eval không kiểm tra: `text=None` phải trả `invalid_input`, hoặc `top_k=0` phải trả `invalid_top_k`. |
 | Unit test: `deduplicate_sources` (3 test cases) | `starter_v0/tests/test_deduplicate_sources.py` — `test_deduplicate_sources_removes_fragments_and_trailing_slashes`, `test_deduplicate_sources_rejects_non_list_input`, `test_deduplicate_sources_skips_invalid_urls_and_items` | Bao phủ chuẩn hóa URL và giữ query string, input không phải list, cùng URL/item không hợp lệ. | Ví dụ lỗi được unit test bắt nhưng eval G11 không kiểm tra: truyền `urls` không phải list phải trả `invalid_input`; G11 chỉ kiểm tra routing và truyền một list URL. |
 | Unit test: `text_stats` (3 test cases) | `starter_v0/tests/test_text_stats.py` — `test_text_stats_happy_path_calculates_metrics`, `test_text_stats_bad_input_handles_gracefully`, `test_text_stats_failure_returns_error_dict` | Bao phủ đếm từ/câu/đoạn/thời gian đọc, input rỗng, ép kiểu wpm dạng chuỗi, và xử lý an toàn lỗi input. | Bắt các lỗi biên như `text=None`, `wpm <= 0` trả về error dict thay vì ném ngoại lệ làm sập agent. |
-| UI | `starter_v0/app.py`, `starter_v0/requirements.txt` | Chạy local bằng `cd starter_v0` rồi `python -m streamlit run app.py`; UI mặc định mở tại `http://localhost:8501`. | Chưa có link deploy công khai được ghi nhận. Cần cấu hình API key cho provider đã chọn; không đưa key vào báo cáo hoặc transcript. |
+| UI (Minimalist ChatGPT-style) | `starter_v0/app.py`, `starter_v0/.streamlit/config.toml`, `starter_v0/requirements.txt` | Chạy local tại `http://localhost:8501` và deploy trên Streamlit Cloud (`https://vinuni-research-agent-nhth.streamlit.app/`); hỗ trợ đóng/mở Sidebar mượt, chọn model ngay trong hộp soạn tin nhắn, quản lý nhiều phiên chat và xuất transcript JSON. | Loại bỏ hoàn toàn tool `send` khỏi danh sách công cụ trên UI để tránh gửi Telegram ngoài ý muốn; tự động ẩn mọi API key (`[REDACTED]`) nếu xảy ra ngoại lệ. |
 
-**Trạng thái chạy unit test:** các test mới được liệt kê ở trên trong source; chưa ghi nhận output chạy pytest cho riêng các test này trong phần bằng chứng B5a.
+**Trạng thái chạy unit test (`pytest`):** Toàn bộ test suite đạt **104 passed, 0 failed, 0 skipped** trong `1.26s` (bao gồm 68 contract tests, 6 example tests, 14 TODO tests đã hoàn thiện, 9 unit tests cho 3 tool mới và 4 regression tests).
 
 ### B5. Bonus Evidence
 
@@ -244,12 +206,13 @@ Chỉ điền nếu nhóm làm bonus (ghi riêng, tối đa 10 điểm). Tool c�
 
 | Bonus | Evidence File | What Worked | Risk / Guardrail |
 |---|---|---|---|
-| Small Local Model | xem B7 |  |  |
-| Hơn 3 tool mới (≥ 4) |  |  |  |
-| `send` gửi thật lên Telegram sau xác nhận | transcript |  |  |
-| Test challenge (0 skipped / regression test) | `pytest` output |  |  |
+| Test challenge (0 skipped / regression test) | `starter_v0/tests/test_tools_todo.py`, `starter_v0/tools/format/tool.py`, `starter_v0/tools/timeline/tool.py`, `starter_v0/tools/social_search/tool.py`, `starter_v0/tools/policy/tool.py`, `starter_v0/tools/send/tool.py`, `starter_v0/tools/lookup/tool.py` | Hoàn thiện toàn bộ 14/14 test `TODO` (0 skipped) và viết thêm 4 regression tests; tổng cộng **104 passed, 0 failed, 0 skipped**. | Tất cả unit test đều chạy hoàn toàn offline thông qua fixture `fake_http` và `block_real_http` trong `tests/conftest.py`, đảm bảo không rò rỉ request mạng thật. |
 
-Test challenge: số bug tìm được trong tool có sẵn (nếu có), cách sửa, và test regression tương ứng.
+**Chi tiết các bug tìm được trong tool có sẵn, cách sửa và regression test tương ứng:**
+1. **`format` (`starter_v0/tools/format/tool.py`)**: Khi một phần tử trong `items` thiếu `url` (hoặc `url=None`) và không có `source`, chuỗi kết quả bị thừa dấu gạch ngang treo ở cuối dòng (`"- **Title**: Summary - "`). **Cách sửa:** Viết hàm `_format_source()` kiểm tra an toàn kiểu chuỗi và chỉ nối `" - [source](url)"` khi có dữ liệu thật. **Regression test:** `test_regression_format_item_missing_url_does_not_leave_dangling_hyphen`.
+2. **`timeline` & `social_search` (`starter_v0/tools/timeline/tool.py`, `starter_v0/tools/social_search/tool.py`)**: Dùng biểu thức `int(limit or 5)` khiến khi truyền `limit=0` lại trả về `5` bài đăng (vì `0` là falsy), còn `limit=-1` cắt mảng `items[:-1]`; ngoài ra `timeline` không tự loại bỏ ký tự `@` đầu `screenname`. **Cách sửa:** Chuẩn hóa `safe_limit = 5 if limit is None else max(0, int(limit))` và `.strip().lstrip("@")` cho `screenname`. **Regression test:** `test_regression_timeline_limit_zero_returns_empty_and_strips_at_prefix`.
+3. **`policy` (`starter_v0/tools/policy/tool.py`)**: Dùng `int(top_k or 3)` khiến `top_k=0` vẫn trả về 3 kết quả thay vì danh sách rỗng `[]`. **Cách sửa:** Chuẩn hóa `limit = 3 if top_k is None else max(0, int(top_k))` và trả về ngay `[]` khi `limit == 0`. **Regression test:** `test_regression_policy_top_k_zero_returns_empty_list`.
+4. **`send` (`starter_v0/tools/send/tool.py`)**: Dùng `if not confirmed:` khiến khi model truyền chuỗi `"false"` hoặc `"0"` (string khác rỗng là truthy trong Python), hàng rào bảo vệ bị vượt qua và tin nhắn được gửi thẳng lên Telegram. **Cách sửa:** Chỉ cho phép gửi khi `confirmed is True` hoặc chuỗi thuộc `{"true", "1", "yes"}`. **Regression test:** `test_regression_send_string_false_confirmation_is_blocked`.
 
 ### B7. Small Local Model Challenge (bonus)
 

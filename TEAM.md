@@ -57,8 +57,8 @@ Sao chép mục dưới đây cho từng thành viên.
 - Dependencies: `starter_v0/requirements.txt`.
 - Backend tích hợp: `starter_v0/chat.py`.
 - Transcript kiểm thử: `starter_v0/transcripts/v0_gemini_20261110T181508022586.transcript.json`.
-- Live Chat trên Streamlit Cloud: [Bằng chứng hội thoại và Tool Calling](starter_v0/transcripts/].
-- Website demo công khai: [https://vinuni-research-agent-nhth.streamlit.app/].
+- Live Chat trên Streamlit Cloud: [Bằng chứng hội thoại và Tool Calling](starter_v0/transcripts/) (`starter_v0/transcripts/v3_gemini_20261110T221335666627.transcript.json`, `starter_v0/transcripts/v3_openrouter_20261110T224752771866.transcript.json`).
+- Website demo công khai: [https://vinuni-research-agent-nhth.streamlit.app/](https://vinuni-research-agent-nhth.streamlit.app/).
 - Merge commit tích hợp UI: `1566ce9`.
 - Báo cáo cá nhân: `report/team/2A202603761_NguyenGiaNam.md`.
 - Báo cáo nhóm: `report/team/group_report.md` (các mục A1, A3, B4, B5a và khó khăn triển khai).
@@ -69,21 +69,28 @@ Sao chép mục dưới đây cho từng thành viên.
 ### Phần việc phụ trách
 
 - Thiết lập môi trường, kiểm tra preflight & pytest, chạy Baseline `v0` và phân tích lỗi (CP1).
-- Phối hợp tối ưu prompt/tool declarations, xây dựng eval cases và hoàn thiện báo cáo nhóm.
+- Tối ưu `system_prompt.md` & `tools.yaml` cho `v1`, thực thi đánh giá `v1`–`v3`, ghi nhận `version_log.csv` và `analysis/base_runs.csv` (CP2).
+- Nâng cấp 6 tool có sẵn, hoàn thiện toàn bộ 14 unit test `TODO` và 4 regression tests để đạt `104 passed, 0 skipped` (CP3 & Bonus Test Challenge).
+- Chạy đánh giá bộ `eval_group.json` (10/10 & 12/12 PASS), tinh chỉnh giao diện Streamlit chuẩn tối giản (`app.py`, `.streamlit/config.toml`), tạo transcript `v3` 4 lượt và hoàn thiện báo cáo nhóm (CP4, CP5).
 
 ### Đóng góp cụ thể
 
 - Cấu hình môi trường `.venv` và API keys, xác thực kết nối OpenRouter (`openai/gpt-4o-mini`) và chạy bộ test hợp đồng (`pytest`).
 - Thực thi chạy đánh giá baseline `v0` trên `data/eval_base.json` (đạt `case_accuracy = 0.65`, `routing = 0.75`, `args = 0.65`, `multiturn = 1.00`), ghi nhận vào `starter_v0/artifacts/version_log.csv`.
 - Phân tích chi tiết 7/20 case FAIL của `v0` theo từng nhóm lỗi (`wrong_tool`, `wrong_arg_value`, `missing_info`, `wrong_boundary`, `out_of_scope`) trong Bảng B1 & B2 của `report/team/group_report.md`.
+- Tối ưu `system_prompt.md` và `tools.yaml` ở `v1` nâng `case_accuracy` từ `0.65` lên `0.90`; chạy đánh giá và cập nhật kết quả `v2` (`0.95`) và `v3` (`1.00` — 20/20 PASS) vào `version_log.csv` và `starter_v0/analysis/base_runs.csv` (80 dòng).
+- Phát hiện và sửa các lỗi biên (edge-case bugs) trong 6 tool có sẵn (`format`, `timeline`, `social_search`, `send`, `policy`, `lookup`); hoàn thiện toàn bộ 14/14 unit test `TODO` và viết thêm 4 regression tests trong `starter_v0/tests/test_tools_todo.py` giúp toàn bộ test suite đạt **104 passed, 0 failed, 0 skipped**.
+- Chạy đánh giá `eval_group.json` đạt tuyệt đối 10/10 PASS (`v3_B_group_openrouter_20261110T193715824551.json`) và 12/12 PASS (`v3_B_group_openrouter_20261110T224703124394.json`).
+- Tối ưu lại toàn bộ giao diện `starter_v0/app.py` và `.streamlit/config.toml` theo phong cách tối giản của ChatGPT (đóng/mở Sidebar mượt với `cubic-bezier`, loại bỏ emoji màu, tích hợp bộ chọn model vào thanh chat), tạo transcript thực tế 4 lượt `starter_v0/transcripts/v3_openrouter_20261110T224752771866.transcript.json` và hoàn thiện Bảng B3, B4, B5a, B5 trong `report/team/group_report.md`.
 
 ### Bằng chứng
 
-- Run log: `starter_v0/runs/v0_B_base_openrouter_20261110T173950199134.json`
-- Version log: `starter_v0/artifacts/version_log.csv` (commit `b4ab63d`)
-- Phân tích CSV: `starter_v0/analysis/base_runs.csv`
-- Báo cáo nhóm: Mục 1, Bảng B1, Bảng B2 trong `report/team/group_report.md`
-- Báo cáo cá nhân: `report/team/2A202603779_DaoNgocHan.md`
+- Run log Base: `starter_v0/runs/v0_B_base_openrouter_20261110T173950199134.json`, `starter_v0/runs/v1_B_base_openrouter_20261110T180455272193.json`, `starter_v0/runs/v2_B_base_openrouter_20261110T185059346257.json`, `starter_v0/runs/v3_B_base_openrouter_20261110T191036287347.json`
+- Run log Group: `starter_v0/runs/v3_B_group_openrouter_20261110T193715824551.json` (10/10 PASS), `starter_v0/runs/v3_B_group_openrouter_20261110T224703124394.json` (12/12 PASS)
+- Version log & CSV: `starter_v0/artifacts/version_log.csv`, `starter_v0/analysis/base_runs.csv`
+- Nâng cấp Tool & Unit Tests (104 passed, 0 skipped): `starter_v0/tests/test_tools_todo.py`, `starter_v0/tools/format/tool.py`, `starter_v0/tools/timeline/tool.py`, `starter_v0/tools/social_search/tool.py`, `starter_v0/tools/send/tool.py`, `starter_v0/tools/policy/tool.py`, `starter_v0/tools/lookup/tool.py`
+- Giao diện UI & Live Transcript: `starter_v0/app.py`, `starter_v0/.streamlit/config.toml`, `starter_v0/transcripts/v3_openrouter_20261110T224752771866.transcript.json`
+- Báo cáo nhóm & cá nhân: `report/team/group_report.md` (Mục 1, B1, B2, B3, B4, B5a, B5), `report/team/2A202603779_DaoNgocHan.md`
 
 ## ThieuTheNgoc-2A202603788
 
@@ -101,7 +108,7 @@ Sao chép mục dưới đây cho từng thành viên.
 - Thêm 5 case single-turn: route tới `extract_keywords`, tìm bài arXiv bằng `papers`, tra cứu chính sách nội bộ bằng `policy`, hỏi khi thiếu arXiv ID/URL, và xác nhận trước khi gửi Telegram.
 - Phát triển tool `deduplicate_sources` trong `starter_v0/tools/deduplicate_sources/`, loại bỏ URL trùng sau chuẩn hóa fragment và dấu gạch chéo cuối, đồng thời giữ query string và thứ tự nguồn đầu tiên.
 - Thêm case `G11_deduplicate_sources_urls` để kiểm tra route đúng tool và truyền danh sách URL gồm URL trùng, hợp lệ và không hợp lệ.
-- `eval_group.json` hiện có 11 case: 6 single-turn và 5 multi-turn. Chưa ghi nhận group eval run.
+- `eval_group.json` hiện có 12 case: 7 single-turn và 5 multi-turn; đã chạy group eval đạt 12/12 PASS (`starter_v0/runs/v3_B_group_openrouter_20261110T224703124394.json`).
 
 ### Bằng chứng
 

@@ -6,16 +6,19 @@ from tools._shared import domain
 
 
 def _src(item: dict[str, Any]) -> str:
-    src = item.get("source") or domain(item.get("url", ""))
-    url = item.get("url") or ""
-    return f"[{src}]({url})" if url else (src or "")
+    url = str(item.get("url") or "").strip()
+    src = str(item.get("source") or "").strip() or domain(url)
+    if url and src:
+        return f"[{src}]({url})"
+    return url or src
 
 
 def _bullet(item: dict[str, Any]) -> str:
-    text = (item.get("summary") or item.get("title") or "").strip().replace("\n", " ")
+    text = str(item.get("summary") or item.get("title") or "").strip().replace("\n", " ")
     if len(text) > 280:
         text = text[:277] + "..."
-    return f"- {text} - {_src(item)}"
+    source_str = _src(item)
+    return f"- {text} - {source_str}" if source_str else f"- {text}"
 
 
 def render_digest(items: list[dict[str, Any]] | None = None, template: str = "sections", headline: str = "") -> dict[str, Any]:
