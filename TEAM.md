@@ -54,7 +54,8 @@ Sao chép mục dưới đây cho từng thành viên.
 ### Phần việc phụ trách
 
 - CP2 — phân tích lỗi R12 và cải tiến `artifacts/tools.yaml` theo từng giả thuyết cho v2 và v3.
-- CP4 — viết 5 case eval single-turn trong `data/eval_group.json`, bao gồm case route tới tool mới `extract_keywords`.
+- CP4 — viết case eval single-turn và multi-turn trong `data/eval_group.json`, bao gồm case route tới `extract_keywords` và `deduplicate_sources`.
+- Phát triển tool `deduplicate_sources`.
 
 ### Đóng góp cụ thể
 
@@ -62,17 +63,20 @@ Sao chép mục dưới đây cho từng thành viên.
 - V2: cập nhật boundary trong mô tả `clarify` và `send`; run đạt 19/20, nhưng R12 vẫn dùng `response_type="text"` thay vì `"yes_no"`.
 - V3: làm rõ xác nhận yes/no phải là bước đầu tiên cho yêu cầu gửi Telegram, kể cả khi nội dung chưa rõ. Run đạt 20/20; R12 gọi `clarify` với `response_type="yes_no"`.
 - Thêm 5 case single-turn: route tới `extract_keywords`, tìm bài arXiv bằng `papers`, tra cứu chính sách nội bộ bằng `policy`, hỏi khi thiếu arXiv ID/URL, và xác nhận trước khi gửi Telegram.
-- `eval_group.json` hiện có 5 case single-turn; 5 case multi-turn và group eval run vẫn cần được bổ sung để hoàn tất CP4.
+- Phát triển tool `deduplicate_sources` trong `starter_v0/tools/deduplicate_sources/`, loại bỏ URL trùng sau chuẩn hóa fragment và dấu gạch chéo cuối, đồng thời giữ query string và thứ tự nguồn đầu tiên.
+- Thêm case `G11_deduplicate_sources_urls` để kiểm tra route đúng tool và truyền danh sách URL gồm URL trùng, hợp lệ và không hợp lệ.
+- `eval_group.json` hiện có 11 case: 6 single-turn và 5 multi-turn. Chưa ghi nhận group eval run.
 
 ### Bằng chứng
 
 - Khai báo tool: `starter_v0/artifacts/tools.yaml`.
 - Eval cases: `starter_v0/data/eval_group.json`.
+- Tool: `starter_v0/tools/deduplicate_sources/tool.py`, `starter_v0/tools/deduplicate_sources/TOOL.md`.
 - Run v1: `starter_v0/runs/v1_B_base_openrouter_20261110T180455272193.json`.
 - Run v2: `starter_v0/runs/v2_B_base_openrouter_20261110T185059346257.json` (19/20; R12 sai `response_type`).
 - Run v3: `starter_v0/runs/v3_B_base_openrouter_20261110T191036287347.json` (20/20; R12 đúng `response_type="yes_no"`).
 - Version log: `starter_v0/artifacts/version_log.csv`.
-- Commit: `55fb0c7` (thay đổi cho v2), `de2d24d` (thay đổi cho v3), `44059ba` (5 case single-turn).
+- Commit: `55fb0c7` (thay đổi cho v2), `de2d24d` (thay đổi cho v3), `44059ba` (5 case single-turn), `870ead4` (tool `deduplicate_sources`).
 - Kiểm tra contract: `pytest tests/test_tool_contract.py -q` — 60 passed.
 - Báo cáo cá nhân: `report/team/2A202603788_ThieuTheNgoc.md`.
 
